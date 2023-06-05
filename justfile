@@ -3,3 +3,6 @@ start-server:
 
 start-pgadmin:
     docker compose -f docker-compose.yml up pgadmin -d --force-recreate
+
+stop-everything:
+    docker compose -f docker-compose.yml down --remove-orphans
