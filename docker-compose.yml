@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:15.1-alpine
+    container_name: postgres-timecapsule
+    ports:
+      - "5432:5432"
+    profiles:
+      - all
+      - postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+
+    volumes:
+      - local_pgdata:/var/lib/postgresql/data
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    restart: always
+    ports:
+      - "5050:5050"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@email.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_LISTEN_PORT: 5050
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    links:
+      - postgres
+
+volumes:
+  local_pgdata:
+  pgadmin-data:
