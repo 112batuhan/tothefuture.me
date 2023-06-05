@@ -19,6 +19,9 @@ services:
     restart: always
     ports:
       - "5050:5050"
+    profiles:
+      - all
+      - pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@email.com
       PGADMIN_DEFAULT_PASSWORD: admin
