@@ -1,13 +1,17 @@
 [package]
-name = "backend"
+name = "timecapsule-rs"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-sqlx = { workspace = true }
-dotenv = { workspace = true }
-tokio = { workspace = true }
-axum = { workspace = true }
-axum-macros = { workspace = true }
-serde = { workspace = true }
-thiserror = { workspace = true }
+sqlx = { version = "0.6", features = [
+    "runtime-tokio-rustls",
+    "postgres",
+    "macros",
+] }
+dotenv = "0.15.0"
+tokio = { version = "1", features = ["full"] }
+axum = "0.6.4"
+axum-macros = "0.3.7"
+serde = { version = "1.0", features = ["derive"] }
+thiserror = "1.0"
