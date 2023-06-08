@@ -1,6 +1,6 @@
-mod user;
+#![allow(unused)]
+pub mod user;
 
-use serde::{Deserialize, Serialize};
 use sqlx::postgres::PgPoolOptions;
 use sqlx::PgPool;
 use thiserror::Error;
@@ -11,7 +11,7 @@ pub struct Db {
 }
 
 impl Db {
-    pub async fn new() -> Result<Self, sqlx::Error> {
+    pub async fn new() -> Result<Self, DbError> {
         dotenv::dotenv().expect("Unable to load environment variables from .env file");
 
         let db_url = std::env::var("DATABASE_URL").expect("Unable to read DATABASE_URL env var");

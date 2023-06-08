@@ -9,17 +9,21 @@
 	let result = null;
 
 	async function doPost() {
-		const res = await fetch('https://httpbin.org/post', {
+		console.log('hi');
+		const res = await fetch('http://127.0.0.1:3040/users', {
 			method: 'POST',
 			body: JSON.stringify({
 				email,
 				username,
 				password
-			})
+			}),
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			}
 		});
 
-		const json = await res.json();
-		result = JSON.stringify(json);
+		result = await res.text();
 	}
 </script>
 
@@ -29,17 +33,17 @@
 			<label for="email"> Email </label>
 			<input bind:value={email} id="email" />
 		</div>
-        <div class="form_field">
-			<label for="username"> Email </label>
-			<input bind:value={email} id="username" />
+		<div class="form_field">
+			<label for="username"> Username </label>
+			<input bind:value={username} id="username" />
 		</div>
-        <div class="form_field">
-			<label for="password"> Email </label>
-			<input bind:value={email} id="password" />
+		<div class="form_field">
+			<label for="password"> Password </label>
+			<input bind:value={password} id="password" />
 		</div>
-        <div class="form_field">
-			<label for="second_password"> Email </label>
-			<input bind:value={email} id="second_password" />
+		<div class="form_field">
+			<label for="second_password"> Confirm password </label>
+			<input bind:value={password2nd} id="second_password" />
 		</div>
 
 		<div class="sign_in_button">
@@ -63,16 +67,15 @@
 		border-radius: 1rem;
 		width: fit-content;
 	}
-    .form_field{
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding-inline: 1rem;
-    }
+	.form_field {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding-inline: 1rem;
+	}
 	.sign_in_button {
 		margin-top: 0.5rem;
 		text-align: center;
 		margin-bottom: 0.5rem;
 	}
-
 </style>

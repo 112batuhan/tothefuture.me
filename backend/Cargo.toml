@@ -4,6 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+
+dotenvy = "0.15"
 sqlx = { version = "0.6", features = [
     "runtime-tokio-rustls",
     "postgres",
@@ -15,3 +17,8 @@ axum = "0.6.4"
 axum-macros = "0.3.7"
 serde = { version = "1.0", features = ["derive"] }
 thiserror = "1.0"
+pbkdf2 = { version = "0.12", features = ["simple"] }
+rand_core = { version = "0.6", features = ["std"] }
+tower-http = { version = "0.4.0", features = ["cors", "trace"] }
+tracing-subscriber = "0.3.17"
+tracing = "0.1.37"
