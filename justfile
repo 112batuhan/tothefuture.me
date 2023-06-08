@@ -1,4 +1,4 @@
-start-server: 
+start-db: 
     docker compose -f docker-compose.yml up postgres -d --force-recreate
 
 start-pgadmin:

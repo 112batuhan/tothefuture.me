@@ -1,9 +1,12 @@
-[package]
+[workspace]
+members = ["backend"]
+
+[workspace.package]
 name = "timecapsule-rs"
 version = "0.1.0"
 edition = "2021"
 
-[dependencies]
+[workspace.dependencies]
 sqlx = { version = "0.6", features = [
     "runtime-tokio-rustls",
     "postgres",

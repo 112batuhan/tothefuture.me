@@ -112,6 +112,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "backend"
+version = "0.1.0"
+dependencies = [
+ "axum",
+ "axum-macros",
+ "dotenv",
+ "serde",
+ "sqlx",
+ "thiserror",
+ "tokio",
+]
+
+[[package]]
 name = "base64"
 version = "0.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1142,19 +1155,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.18",
-]
-
-[[package]]
-name = "timecapsule-rs"
-version = "0.1.0"
-dependencies = [
- "axum",
- "axum-macros",
- "dotenv",
- "serde",
- "sqlx",
- "thiserror",
- "tokio",
 ]
 
 [[package]]
