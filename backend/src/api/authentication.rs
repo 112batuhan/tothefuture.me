@@ -2,15 +2,16 @@ use std::sync::Arc;
 
 use axum::extract::State;
 use axum::response::Redirect;
-use axum::Json;
+use axum::{Form, Json};
 use pbkdf2::password_hash::rand_core::OsRng;
 use pbkdf2::password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString};
 use pbkdf2::Pbkdf2;
 use serde::{Deserialize, Serialize};
+use tracing_subscriber::field::debug;
 
 use super::{ApiError, SharedState};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct RequestUserBody {
     username: String,
     email: String,
@@ -31,15 +32,14 @@ fn hash_password(password: &str) -> Result<String, ApiError> {
 
 pub async fn password_authenticate(
     State(state): State<Arc<SharedState>>,
-    Json(body): Json<RequestUserBody>,
-) -> String {
-    let hashed_password = hash_password(&body.password).unwrap();
+    Form(body): Form<RequestUserBody>,
+) -> Result<(), ApiError> {
+    let hashed_password = hash_password(&body.password)?;
 
     state
         .database
         .create_user(&body.username, &body.email, &hashed_password)
-        .await
-        .unwrap();
+        .await?;
 
-    hashed_password
+    Ok(())
 }

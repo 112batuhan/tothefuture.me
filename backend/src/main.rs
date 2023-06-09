@@ -27,6 +27,7 @@ async fn main() {
         // allow requests from any origin
         .allow_origin(Any);
 
+
     let app = Router::new()
         .route("/users", post(password_authenticate))
         .layer(cors)

@@ -1,4 +1,8 @@
 <script>
+	// @ts-nocheck
+
+	import { goto } from '$app/navigation';
+
 	let email = '';
 	let username = '';
 	let password = '';
@@ -8,38 +12,40 @@
 	 */
 	let result = null;
 
-	async function doPost() {
-		console.log('hi');
-		const res = await fetch('http://127.0.0.1:3040/users', {
-			method: 'POST',
-			body: JSON.stringify({
-				email,
-				username,
-				password
-			}),
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json'
-			}
-		});
+	async function doPost(e) {
+		const data = new FormData(e.target);
+		const formData = new URLSearchParams();
 
-		result = await res.text();
+		for (var [key, value] of data.entries()) {
+			formData.append(key, value);
+		}
+		const res = await fetch(e.target.action, {
+			method: 'POST',
+			headers: {
+				Accept: ' application/x-www-form-urlencoded',
+				'Content-Type': ' application/x-www-form-urlencoded'
+			},
+			body: formData.toString()
+		});
+		if (res.ok) {
+			goto('/success');
+		}
 	}
 </script>
 
-<form>
+<form action="http://127.0.0.1:3040/users" method="post" on:submit|preventDefault={doPost}>
 	<div class="container">
 		<div class="form_field">
 			<label for="email"> Email </label>
-			<input bind:value={email} id="email" />
+			<input bind:value={email} name="email" id="email" />
 		</div>
 		<div class="form_field">
 			<label for="username"> Username </label>
-			<input bind:value={username} id="username" />
+			<input bind:value={username} name="username" id="username" />
 		</div>
 		<div class="form_field">
 			<label for="password"> Password </label>
-			<input bind:value={password} id="password" />
+			<input bind:value={password} name="password" id="password" />
 		</div>
 		<div class="form_field">
 			<label for="second_password"> Confirm password </label>
@@ -50,7 +56,7 @@
 			{#if password != password2nd}
 				Passwords doesn't match
 			{:else}
-				<button type="button" on:click={doPost}> log in </button>
+				<input type="submit" value="log in" />
 			{/if}
 		</div>
 	</div>
