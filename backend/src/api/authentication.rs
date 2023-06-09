@@ -20,7 +20,6 @@ pub struct RequestUserBody {
 
 fn hash_password(password: &str) -> Result<String, ApiError> {
     let salt = SaltString::generate(&mut OsRng);
-
     let hash_result = Pbkdf2.hash_password(password.as_bytes(), &salt);
 
     // Manual result handling because of poor error implementation in library
@@ -30,7 +29,7 @@ fn hash_password(password: &str) -> Result<String, ApiError> {
     }
 }
 
-pub async fn password_authenticate(
+pub async fn sign_up(
     State(state): State<Arc<SharedState>>,
     Form(body): Form<RequestUserBody>,
 ) -> Result<(), ApiError> {

@@ -5,6 +5,8 @@ use sqlx::postgres::PgPoolOptions;
 use sqlx::PgPool;
 use thiserror::Error;
 
+const UNIQUE_CONSTRAINT_VIOLATION: &str = "23505";
+
 #[derive(Clone)]
 pub struct Db {
     pool: PgPool,
@@ -26,8 +28,8 @@ impl Db {
 
 #[derive(Error, Debug)]
 pub enum DbError {
-    #[error("Username already exist.")]
-    DuplicateUsername,
+    #[error("Tried to insert a value into database that is supposed to be unique: {0}")]
+    UniqueConstraintViolation(String),
     #[error("Unhandled database error.")]
     Database(#[from] sqlx::Error),
 }

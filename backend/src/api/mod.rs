@@ -33,8 +33,18 @@ pub enum ApiError {
 
 impl IntoResponse for ApiError {
     fn into_response(self) -> Response {
-        let body = "internal".to_string();
+        let body = self.to_string();
+        let status_code = self.to_status_code();
+        (status_code, body).into_response()
+    }
+}
 
-        (StatusCode::INTERNAL_SERVER_ERROR, body).into_response()
+impl ApiError {
+    fn to_status_code(self) -> StatusCode {
+        match self {
+            ApiError::General => StatusCode::INTERNAL_SERVER_ERROR,
+            ApiError::Hash => StatusCode::INTERNAL_SERVER_ERROR,
+            ApiError::Database(_) => StatusCode::INTERNAL_SERVER_ERROR,
+        }
     }
 }
