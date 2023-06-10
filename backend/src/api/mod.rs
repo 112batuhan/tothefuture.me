@@ -6,8 +6,7 @@ use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use thiserror::Error;
 
-use super::database_sea::Db;
-use crate::database_sea;
+use super::database::Db;
 
 pub struct SharedState {
     database: Db,
@@ -28,7 +27,7 @@ pub enum ApiError {
     #[error("Error during hashing")]
     Hash,
     #[error("Database error {0}")]
-    Database(#[from] database::DbError),
+    Database(#[from] sea_orm::error::DbErr),
 }
 
 impl IntoResponse for ApiError {

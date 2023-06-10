@@ -1,5 +1,5 @@
 pub mod api;
-pub mod database_sea;
+pub mod database;
 
 use std::net::SocketAddr;
 
