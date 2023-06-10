@@ -45,13 +45,9 @@ pub async fn sign_in(
     State(state): State<Arc<SharedState>>,
     Form(body): Form<RequestUserBody>,
 ) -> Result<(), ApiError> {
-    dbg!(&body);
     let user = state.database.find_user_by_email(&body.email).await?;
-    dbg!(&user);
     let parsed_hash = PasswordHash::new(&user.password).unwrap();
-    dbg!(&parsed_hash);
     let password_result = Pbkdf2.verify_password(body.password.as_bytes(), &parsed_hash);
-    dbg!(password_result);
     match password_result {
         Ok(_) => Ok(()),
         Err(err) => match err {
