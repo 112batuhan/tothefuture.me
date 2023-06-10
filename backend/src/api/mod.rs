@@ -47,8 +47,8 @@ pub enum ApiError {
     Database(#[from] DbError),
     #[error("Wrong password.")]
     WrongPassword,
-    #[error("Session token error.")]
-    SessionToken(#[from] axum::http::header::InvalidHeaderValue),
+    #[error("Missing token from the client request.")]
+    MissingSessionTokenInClientRequest,
 }
 
 impl IntoResponse for ApiError {
@@ -69,9 +69,9 @@ impl ApiError {
                 DbError::UniqueConstraintViolation => StatusCode::CONFLICT,
                 DbError::Database(_) => StatusCode::INTERNAL_SERVER_ERROR,
                 DbError::EmptyQuery => StatusCode::NOT_FOUND,
-
+                DbError::MissingSessionToken => StatusCode::UNAUTHORIZED,
             },
-            ApiError::SessionToken(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            ApiError::MissingSessionTokenInClientRequest => StatusCode::UNAUTHORIZED,
         }
     }
 
@@ -84,8 +84,11 @@ impl ApiError {
                 DbError::UniqueConstraintViolation => "existing_user".to_string(),
                 DbError::Database(_) => "unhandled_database_error".to_string(),
                 DbError::EmptyQuery => "empty_query_result".to_string(),
+                DbError::MissingSessionToken => "missing_token_in_server".to_string(),
             },
-            ApiError::SessionToken(_) => "session_token_error".to_string(),
+            ApiError::MissingSessionTokenInClientRequest => {
+                "missing_token_in_client_request".to_string()
+            }
         };
 
         let message = self.to_string();

@@ -1,7 +1,9 @@
 use std::sync::Arc;
 
 use axum::extract::State;
-use axum::http::{HeaderMap, HeaderValue};
+use axum::http::header::COOKIE;
+use axum::http::{HeaderMap, HeaderValue, Request};
+use axum::response::Response;
 use axum::Form;
 use pbkdf2::password_hash::rand_core::OsRng;
 use pbkdf2::password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString};
@@ -40,6 +42,20 @@ async fn generate_session_token(random: Arc<Mutex<ChaCha8Rng>>) -> String {
     u128::from_le_bytes(u128_pool).to_string()
 }
 
+// TODO: Optimize this to get rid of clones
+// At this point I'm coding for 13 hours straight.
+// I just want to get this over with.
+fn extract_token(header: HeaderValue) -> String {
+    header
+        .to_str()
+        .unwrap()
+        .split("=")
+        .skip(1)
+        .next()
+        .unwrap()
+        .to_string()
+}
+
 pub async fn sign_up(
     State(state): State<Arc<SharedState>>,
     Form(body): Form<RequestUserBody>,
@@ -76,7 +92,35 @@ pub async fn sign_in(
 
     let mut headers = HeaderMap::new();
     let cookie_value = format!("session_token={}; Max-Age=3600", session_token);
-    headers.insert("Set-Cookie", HeaderValue::from_str(&cookie_value)?);
+    // Handle the unwrap here, I feel like this is unfaillable but might as well.
+    // There used to be an error for this but now I don't know where.
+    headers.insert("Set-Cookie", HeaderValue::from_str(&cookie_value).unwrap());
 
     Ok(headers)
+}
+pub async fn logout(
+    State(state): State<Arc<SharedState>>,
+    headers: HeaderMap,
+) -> Result<(), ApiError> {
+    let token = headers.get(COOKIE).unwrap();
+    let token = extract_token(token.clone());
+
+    state.database.delete_session(&token).await?;
+    Ok(())
+}
+
+pub async fn check_session_token<T>(
+    State(state): State<Arc<SharedState>>,
+    request: Request<T>,
+    next: axum::middleware::Next<T>,
+) -> Result<Response, ApiError> {
+    let token_option = request.headers().get(COOKIE);
+    let token = match token_option {
+        None => return Err(ApiError::MissingSessionTokenInClientRequest),
+        Some(token) => extract_token(token.clone()),
+    };
+
+    state.database.get_session(&token).await?;
+
+    Ok(next.run(request).await)
 }

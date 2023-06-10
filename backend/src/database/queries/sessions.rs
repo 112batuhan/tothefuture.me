@@ -1,7 +1,7 @@
 use chrono::{DateTime, Duration, FixedOffset, Utc};
 use sea_orm::sea_query::OnConflict;
 use sea_orm::ActiveValue::Set;
-use sea_orm::EntityTrait;
+use sea_orm::{ColumnTrait, EntityTrait, ModelTrait, QueryFilter};
 
 use crate::database::entities::prelude::*;
 use crate::database::entities::*;
@@ -28,6 +28,24 @@ impl Db {
             .exec(&self.db_con)
             .await?;
 
+        Ok(())
+    }
+
+    pub async fn get_session(&self, token: &str) -> Result<sessions::Model, DbError> {
+        let session: Option<sessions::Model> = sessions::Entity::find()
+            .filter(sessions::Column::Token.eq(token))
+            .one(&self.db_con)
+            .await?;
+
+        match session {
+            Some(user) => Ok(user),
+            None => Err(DbError::MissingSessionToken),
+        }
+    }
+
+    pub async fn delete_session(&self, token: &str) -> Result<(), DbError> {
+        let session = self.get_session(token).await?;
+        session.delete(&self.db_con).await?;
         Ok(())
     }
 }

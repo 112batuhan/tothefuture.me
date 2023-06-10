@@ -33,6 +33,8 @@ pub enum DbError {
     UniqueConstraintViolation,
     #[error("Unhandled database error: {0}")]
     Database(#[from] sea_orm::error::DbErr),
-    #[error("Empty Query")]
+    #[error("Empty query.")]
     EmptyQuery,
+    #[error("Missing session token.")]
+    MissingSessionToken,
 }
