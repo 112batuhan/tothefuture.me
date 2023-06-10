@@ -20,6 +20,7 @@
 		}
 		const res = await fetch(e.target.action, {
 			method: 'POST',
+			credentials: 'include',
 			headers: {
 				Accept: ' application/x-www-form-urlencoded',
 				'Content-Type': ' application/x-www-form-urlencoded'

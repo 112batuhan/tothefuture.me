@@ -3,7 +3,7 @@ pub mod database;
 
 use std::net::SocketAddr;
 
-use api::authentication::{sign_up, sign_in};
+use api::authentication::{sign_in, sign_up};
 use api::SharedState;
 use axum::http::Method;
 use axum::routing::post;
@@ -12,7 +12,6 @@ use tower_http::cors::{Any, CorsLayer};
 
 #[tokio::main]
 async fn main() {
-
     dotenv::dotenv().expect("Unable to load environment variables from .env file");
 
     tracing_subscriber::fmt()
