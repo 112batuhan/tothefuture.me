@@ -1,6 +1,6 @@
 use sea_orm::error::RuntimeErr;
 use sea_orm::ActiveValue::Set;
-use sea_orm::{ColumnTrait, DbErr, EntityTrait, QueryFilter};
+use sea_orm::{DbErr, EntityTrait};
 
 use crate::database::entities::prelude::*;
 use crate::database::entities::*;
@@ -13,6 +13,7 @@ impl Db {
         password: &str,
     ) -> Result<(), DbError> {
         let user_to_insert = users::ActiveModel {
+            username: Set(username.to_string()),
             email: Set(email.to_string()),
             password: Set(password.to_string()),
             ..Default::default()
@@ -33,18 +34,6 @@ impl Db {
                 },
                 other_err => Err(DbError::from(other_err)),
             },
-        }
-    }
-
-    pub async fn find_user_by_email(&self, email: &str) -> Result<users::Model, DbError> {
-        let user: Option<users::Model> = users::Entity::find()
-            .filter(users::Column::Email.eq(email))
-            .one(&self.db_con)
-            .await?;
-
-        match user {
-            Some(user) => Ok(user),
-            None => Err(DbError::EmptyQuery),
         }
     }
 }

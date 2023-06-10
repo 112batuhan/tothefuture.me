@@ -3,7 +3,7 @@ pub mod database;
 
 use std::net::SocketAddr;
 
-use api::authentication::sign_up;
+use api::authentication::{sign_up, sign_in};
 use api::SharedState;
 use axum::http::Method;
 use axum::routing::post;
@@ -31,7 +31,8 @@ async fn main() {
         .allow_origin(Any);
 
     let app = Router::new()
-        .route("/users", post(sign_up))
+        .route("/sign_up", post(sign_up))
+        .route("/sign_in", post(sign_in))
         .layer(cors)
         .with_state(state);
 

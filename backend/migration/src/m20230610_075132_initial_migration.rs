@@ -21,12 +21,6 @@ impl MigrationTrait for Migration {
                             .primary_key(),
                     )
                     .col(
-                        ColumnDef::new(Users::Username)
-                            .string()
-                            .not_null()
-                            .unique_key(),
-                    )
-                    .col(
                         ColumnDef::new(Users::Email)
                             .string()
                             .not_null()
@@ -52,7 +46,6 @@ impl MigrationTrait for Migration {
 enum Users {
     Table,
     Id,
-    Username,
     Email,
     Password,
 }

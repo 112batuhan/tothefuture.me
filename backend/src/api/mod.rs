@@ -32,11 +32,13 @@ pub struct ErrorMessage {
 pub enum ApiError {
     #[error("General internal error.")]
     General,
-    // Can't use #[from] here because of poor error implementation in hash library
+    // Can't use #[from] here because missing std::error implementation in hash library
     #[error("Error during hashing.")]
     Hash,
-    #[error("Database error.")]
+    #[error("Database error: {0}")]
     Database(#[from] DbError),
+    #[error("Wrong password.")]
+    WrongPassword,
 }
 
 impl IntoResponse for ApiError {
@@ -52,20 +54,28 @@ impl ApiError {
         match self {
             ApiError::General => StatusCode::INTERNAL_SERVER_ERROR,
             ApiError::Hash => StatusCode::INTERNAL_SERVER_ERROR,
+            ApiError::WrongPassword => StatusCode::UNAUTHORIZED,
             ApiError::Database(database_error) => match database_error {
                 DbError::UniqueConstraintViolation => StatusCode::CONFLICT,
                 DbError::Database(_) => StatusCode::INTERNAL_SERVER_ERROR,
+                DbError::EmptyQuery => StatusCode::NOT_FOUND,
             },
         }
     }
 
     fn to_error_json(&self) -> Json<ErrorMessage> {
-        let error_type = self.to_string();
-
-        let message = match self {
-            ApiError::Database(err) => err.to_string(),
-            _ => "".to_string(),
+        let error_type = match self {
+            ApiError::General => "Unhandled_internal_error".to_string(),
+            ApiError::Hash => "hash_error".to_string(),
+            ApiError::WrongPassword => "password_mismatch".to_string(),
+            ApiError::Database(database_error) => match database_error {
+                DbError::UniqueConstraintViolation => "existing_user".to_string(),
+                DbError::Database(_) => "unhandled_database_error".to_string(),
+                DbError::EmptyQuery => "empty_query_result".to_string(),
+            },
         };
+
+        let message = self.to_string();
 
         Json(ErrorMessage {
             error_type,
