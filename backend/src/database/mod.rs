@@ -34,5 +34,5 @@ pub enum DbError {
     #[error("Unhandled database error: {0}")]
     Database(#[from] sea_orm::error::DbErr),
     #[error("Empty Query")]
-    EmptyQuery
+    EmptyQuery,
 }

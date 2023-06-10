@@ -47,6 +47,8 @@ pub enum ApiError {
     Database(#[from] DbError),
     #[error("Wrong password.")]
     WrongPassword,
+    #[error("Session token error.")]
+    SessionToken(#[from] axum::http::header::InvalidHeaderValue),
 }
 
 impl IntoResponse for ApiError {
@@ -67,7 +69,9 @@ impl ApiError {
                 DbError::UniqueConstraintViolation => StatusCode::CONFLICT,
                 DbError::Database(_) => StatusCode::INTERNAL_SERVER_ERROR,
                 DbError::EmptyQuery => StatusCode::NOT_FOUND,
+
             },
+            ApiError::SessionToken(_) => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 
@@ -81,6 +85,7 @@ impl ApiError {
                 DbError::Database(_) => "unhandled_database_error".to_string(),
                 DbError::EmptyQuery => "empty_query_result".to_string(),
             },
+            ApiError::SessionToken(_) => "session_token_error".to_string(),
         };
 
         let message = self.to_string();

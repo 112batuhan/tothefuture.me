@@ -47,4 +47,5 @@ impl Db {
             None => Err(DbError::EmptyQuery),
         }
     }
+
 }

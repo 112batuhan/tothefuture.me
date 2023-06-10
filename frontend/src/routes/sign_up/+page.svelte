@@ -4,7 +4,6 @@
 	import { goto } from '$app/navigation';
 
 	let email = '';
-	let username = '';
 	let password = '';
 	let password2nd = '';
 	/**

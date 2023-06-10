@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
 use axum::extract::State;
-use axum::response::IntoResponse;
-use axum::{http, Form};
+use axum::http::{HeaderMap, HeaderValue};
+use axum::Form;
 use pbkdf2::password_hash::rand_core::OsRng;
 use pbkdf2::password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString};
 use pbkdf2::Pbkdf2;
@@ -57,7 +57,7 @@ pub async fn sign_up(
 pub async fn sign_in(
     State(state): State<Arc<SharedState>>,
     Form(body): Form<RequestUserBody>,
-) -> Result<impl IntoResponse, ApiError> {
+) -> Result<HeaderMap, ApiError> {
     let user = state.database.find_user_by_email(&body.email).await?;
     let parsed_hash = PasswordHash::new(&user.password).unwrap();
     let password_result = Pbkdf2.verify_password(body.password.as_bytes(), &parsed_hash);
@@ -71,18 +71,12 @@ pub async fn sign_in(
     let session_token = generate_session_token(state.random.clone()).await;
     state
         .database
-        .create_session(user.id, &session_token)
+        .upsert_session(user.id, &session_token)
         .await?;
 
-    http::Response::builder()
-        .status(http::StatusCode::SEE_OTHER)
-        .header("Location", "/")
-        .header(
-            "Set-Cookie",
-            format!("session_token={}; Max-Age=999999", session_token),
-        )
-        .body(http_body::Empty::<String>::new())
-        .unwrap();
+    let mut headers = HeaderMap::new();
+    let cookie_value = format!("session_token={}; Max-Age=3600", session_token);
+    headers.insert("Set-Cookie", HeaderValue::from_str(&cookie_value)?);
 
-    Ok(())
+    Ok(headers)
 }
