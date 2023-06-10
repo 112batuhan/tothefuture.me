@@ -6,8 +6,8 @@ use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use thiserror::Error;
 
-use super::database::Db;
-use crate::database;
+use super::database_sea::Db;
+use crate::database_sea;
 
 pub struct SharedState {
     database: Db,

@@ -1,4 +1,3 @@
-#![allow(unused)]
 pub mod user;
 
 use sqlx::postgres::PgPoolOptions;

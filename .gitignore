@@ -1,5 +1,6 @@
 .env
 backend/target
+backend/migration/target
 frontend.DS_Store
 frontend/node_modules
 frontend//build
@@ -10,3 +11,4 @@ frontend/.env.*
 frontend/!.env.example
 frontend/vite.config.js.timestamp-*
 frontend/vite.config.ts.timestamp-*
+.vscode

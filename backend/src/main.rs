@@ -1,5 +1,5 @@
 pub mod api;
-pub mod database;
+pub mod database_sea;
 
 use std::net::SocketAddr;
 
@@ -12,6 +12,9 @@ use tower_http::cors::{Any, CorsLayer};
 
 #[tokio::main]
 async fn main() {
+
+    dotenv::dotenv().expect("Unable to load environment variables from .env file");
+
     tracing_subscriber::fmt()
         .with_max_level(tracing::Level::DEBUG)
         .init();

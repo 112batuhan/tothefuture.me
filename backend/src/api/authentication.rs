@@ -1,13 +1,11 @@
 use std::sync::Arc;
 
 use axum::extract::State;
-use axum::response::Redirect;
-use axum::{Form, Json};
+use axum::Form;
 use pbkdf2::password_hash::rand_core::OsRng;
 use pbkdf2::password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString};
 use pbkdf2::Pbkdf2;
 use serde::{Deserialize, Serialize};
-use tracing_subscriber::field::debug;
 
 use super::{ApiError, SharedState};
 
