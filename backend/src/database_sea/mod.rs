@@ -1,34 +1,29 @@
 pub mod entities;
 pub mod queries;
 
+use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use thiserror::Error;
+use tracing::log;
 
 const UNIQUE_CONSTRAINT_VIOLATION: &str = "23505";
 
 #[derive(Clone)]
 pub struct Db {
-    db_con: PgPool,
+    db_con: DatabaseConnection,
 }
 
 impl Db {
     pub async fn new() -> Result<Self, DbError> {
-        
         let db_url = std::env::var("DATABASE_URL").expect("Unable to read DATABASE_URL env var");
 
         let mut opt = ConnectOptions::new(db_url);
         opt.max_connections(100)
-            .min_connections(5)
-            .connect_timeout(Duration::from_secs(8))
-            .acquire_timeout(Duration::from_secs(8))
-            .idle_timeout(Duration::from_secs(8))
-            .max_lifetime(Duration::from_secs(8))
+            .min_connections(1)
             .sqlx_logging(true)
-            .sqlx_logging_level(log::LevelFilter::Info)
-            .set_schema_search_path("my_schema".into()); // Setting default PostgreSQL schema
+            .sqlx_logging_level(log::LevelFilter::Info);
 
         let db_con = Database::connect(opt).await?;
-        Ok(Self{ db_con   })
-        
+        Ok(Self { db_con })
     }
 }
 

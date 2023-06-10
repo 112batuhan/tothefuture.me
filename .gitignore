@@ -12,3 +12,4 @@ frontend/!.env.example
 frontend/vite.config.js.timestamp-*
 frontend/vite.config.ts.timestamp-*
 .vscode
+target
