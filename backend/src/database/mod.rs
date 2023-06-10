@@ -1,7 +1,7 @@
 pub mod entities;
 pub mod queries;
 
-use sea_orm::{ConnectOptions, Database, DatabaseConnection, DbErr};
+use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use thiserror::Error;
 use tracing::log;
 
