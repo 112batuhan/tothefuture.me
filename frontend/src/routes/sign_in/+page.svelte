@@ -26,7 +26,6 @@
 			},
 			body: formData.toString()
 		});
-		console.log(res);
 		if (res.ok) {
 			goto('/success');
 		}

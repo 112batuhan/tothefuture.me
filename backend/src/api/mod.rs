@@ -5,20 +5,28 @@ use std::sync::Arc;
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum::Json;
+use rand_chacha::ChaCha8Rng;
+use rand_core::{OsRng, RngCore, SeedableRng};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
+use tokio::sync::Mutex;
 
 use super::database::Db;
 use crate::database::DbError;
 
 pub struct SharedState {
     database: Db,
+    random: Arc<Mutex<ChaCha8Rng>>,
 }
 
 impl SharedState {
     pub async fn new() -> Result<Arc<Self>, ApiError> {
         let database = Db::new().await?;
-        Ok(Arc::new(SharedState { database }))
+
+        let random = ChaCha8Rng::seed_from_u64(OsRng.next_u64());
+        let random = Arc::new(Mutex::new(random));
+
+        Ok(Arc::new(SharedState { database, random }))
     }
 }
 

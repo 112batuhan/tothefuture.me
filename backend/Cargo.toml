@@ -21,3 +21,6 @@ sea-orm = { sea-orm = "0.11.3", features = [
     "macros",
 ] }
 sqlx = { version = "0.6.3" }
+chrono = { version = "0.4.26", features = ["clock"] }
+rand_chacha = "0.3.1"
+http-body = "0.4.5"

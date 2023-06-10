@@ -20,8 +20,12 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Sessions::Expires).date_time().not_null())
-                    .col(ColumnDef::new(Sessions::Data).string().not_null())
+                    .col(
+                        ColumnDef::new(Sessions::Expires)
+                            .timestamp_with_time_zone()
+                            .not_null(),
+                    )
+                    .col(ColumnDef::new(Sessions::Token).string().not_null())
                     .to_owned(),
             )
             .await
@@ -42,5 +46,5 @@ enum Sessions {
     Table,
     Id,
     Expires,
-    Data,
+    Token,
 }
