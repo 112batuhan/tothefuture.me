@@ -6,9 +6,9 @@ use std::net::SocketAddr;
 use api::authentication::{check_session_token, logout, sign_in, sign_up};
 use api::SharedState;
 use axum::http::{header, Method};
-use axum::routing::{delete, get, post};
+use axum::routing::{delete, post};
 use axum::{middleware, Router};
-use tower_http::cors::{Any, CorsLayer};
+use tower_http::cors::{CorsLayer};
 
 #[tokio::main]
 async fn main() {
