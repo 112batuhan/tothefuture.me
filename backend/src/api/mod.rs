@@ -33,9 +33,9 @@ pub enum ApiError {
     #[error("General internal error.")]
     General,
     // Can't use #[from] here because of poor error implementation in hash library
-    #[error("Error during hashing")]
+    #[error("Error during hashing.")]
     Hash,
-    #[error("Database error")]
+    #[error("Database error.")]
     Database(#[from] DbError),
 }
 

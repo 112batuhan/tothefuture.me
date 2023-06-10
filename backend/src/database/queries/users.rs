@@ -23,7 +23,7 @@ impl Db {
         match insert_result {
             Ok(_) => Ok(()),
             Err(orm_error) => match orm_error {
-                DbErr::Exec(RuntimeErr::SqlxError(ref sqlx_error)) => match sqlx_error {
+                DbErr::Query(RuntimeErr::SqlxError(ref sqlx_error)) => match sqlx_error {
                     sqlx::error::Error::Database(error) => {
                         if error.code().unwrap() == UNIQUE_KEY_VIOLATION_CODE {
                             Err(DbError::UniqueConstraintViolation)
