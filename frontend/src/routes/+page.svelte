@@ -7,3 +7,6 @@
 <form>
 	<a href="/success">success</a>
 </form>
+<form>
+	<a href="/email">email</a>
+</form>
