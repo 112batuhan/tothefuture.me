@@ -1,22 +1,85 @@
-<script>
-	import { onMount } from 'svelte';
-	import { Prism } from './idk';
+<script lang="ts">
+	import { AceEditor } from 'svelte-ace';
+	import 'brace/mode/html';
+	import 'brace/theme/chrome';
 	import { html } from 'js-beautify';
+	var text = `<!DOCTYPE html>
+<html>
+<head>
+  <title>Random HTML with Styling</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+    }
 
-	var html2 = '';
+    h1 {
+      color: #333333;
+      text-align: center;
+    }
 
-	onMount(async () => {
-		html2 =
-			'<!DOCTYPE html><html lang="en"><head><meta name="format-detection" content="email=no"/><meta name="format-detection" content="date=no"/><style nonce="9cJibscEHtcivb4VKjzbrA">.awl a {color: #FFFFFF; text-decoration: none;} .abml a {color: #000000; font-family: Roboto-Medium,Helvetica,Arial,sans-serif; font-weight: bold; text-decoration: none;} .adgl a {color: rgba(0, 0, 0, 0.87); text-decoration: none;} .afal a {color: #b0b0b0; text-decoration: none;} @media screen and (min-width: 600px) {.v2sp {padding: 6px 30px 0px;} .v2rsp {padding: 0px 10px;}} @media screen and (min-width: 600px) {.mdv2rw {padding: 40px 40px;}} </style><link href="//fonts.googleapis.com/css?family=Google+Sans_old" rel="stylesheet" type="text/css" nonce="9cJibscEHtcivb4VKjzbrA"/></head><body style="margin: 0; padding: 0;" bgcolor="#FFFFFF"><table width="100%" height="100%" style="min-width: 348px;" border="0" cellspacing="0" cellpadding="0" lang="en"><tr height="32" style="height: 32px;"><td></td></tr><tr align="center"><td><div itemscope itemtype="//schema.org/EmailMessage"><div itemprop="action" itemscope itemtype="//schema.org/ViewAction"><link itemprop="url" href="https://accounts.google.com/AccountChooser?Email=batuhancakir0112@gmail.com&amp;continue=https://myaccount.google.com/alert/nt/1686429886000?rfn%3D325%26rfnc%3D1%26eid%3D-2702980918239528880%26et%3D0"/><meta itemprop="name" content="Review Activity"/></div></div><table border="0" cellspacing="0" cellpadding="0" style="padding-bottom: 20px; max-width: 516px; min-width: 220px;"><tr><td width="8" style="width: 8px;"></td><td><div style="border-style: solid; border-width: thin; border-color:#dadce0; border-radius: 8px; padding: 40px 20px;" align="center" class="mdv2rw"><img src="https://www.gstatic.com/images/branding/googlelogo/2x/googlelogo_color_74x24dp.png" width="74" height="24" aria-hidden="true" style="margin-bottom: 16px;" alt="Google"><div style="font-family: &#39;Google Sans&#39;,Roboto,RobotoDraft,Helvetica,Arial,sans-serif;border-bottom: thin solid #dadce0; color: rgba(0,0,0,0.87); line-height: 32px; padding-bottom: 24px;text-align: center; word-break: break-word;"><div style="font-size: 24px;">A new sign-in on Linux </div><table align="center" style="margin-top:8px;"><tr style="line-height: normal;"><td align="right" style="padding-right:8px;"><img width="20" height="20" style="width: 20px; height: 20px; vertical-align: sub; border-radius: 50%;;" src="https://lh3.googleusercontent.com/a/AAcHTteWnUMUJvoPNPu6nOZ5In6pWLKI2Lm8zwnYJDEA=s96" alt=""></td><td><a style="font-family: &#39;Google Sans&#39;,Roboto,RobotoDraft,Helvetica,Arial,sans-serif;color: rgba(0,0,0,0.87); font-size: 14px; line-height: 20px;">batuhancakir0112@gmail.com</a></td></tr></table> </div><div style="font-family: Roboto-Regular,Helvetica,Arial,sans-serif; font-size: 14px; color: rgba(0,0,0,0.87); line-height: 20px;padding-top: 20px; text-align: center;">We noticed a new sign-in to your Google Account on a Linux device. If this was you, you don’t need to do anything. If not, we’ll help you secure your account.<div style="padding-top: 32px; text-align: center;"><a href="https://accounts.google.com/AccountChooser?Email=batuhancakir0112@gmail.com&amp;continue=https://myaccount.google.com/alert/nt/1686429886000?rfn%3D325%26rfnc%3D1%26eid%3D-2702980918239528880%26et%3D0" target="_blank" link-id="main-button-link" style="font-family: &#39;Google Sans&#39;,Roboto,RobotoDraft,Helvetica,Arial,sans-serif; line-height: 16px; color: #ffffff; font-weight: 400; text-decoration: none;font-size: 14px;display:inline-block;padding: 10px 24px;background-color: #4184F3; border-radius: 5px; min-width: 90px;">Check activity</a></div></div><div style="padding-top: 20px; font-size: 12px; line-height: 16px; color: #5f6368; letter-spacing: 0.3px; text-align: center">You can also see security activity at<br><a style="color: rgba(0, 0, 0, 0.87);text-decoration: inherit;">https://myaccount.google.com/notifications</a></div></div><div style="text-align: left;"><div style="font-family: Roboto-Regular,Helvetica,Arial,sans-serif;color: rgba(0,0,0,0.54); font-size: 11px; line-height: 18px; padding-top: 12px; text-align: center;"><div>You received this email to let you know about important changes to your Google Account and services.</div><div style="direction: ltr;">&copy; 2023 Google LLC, <a class="afal" style="font-family: Roboto-Regular,Helvetica,Arial,sans-serif;color: rgba(0,0,0,0.54); font-size: 11px; line-height: 18px; padding-top: 12px; text-align: center;">1600 Amphitheatre Parkway, Mountain View, CA 94043, USA</a></div></div></div></td><td width="8" style="width: 8px;"></td></tr></table></td></tr><tr height="32" style="height: 32px;"><td></td></tr></table></body></html>';
+    p {
+      color: #666666;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
 
-		html2 = html(html2, { indent_size: 4, wrap_line_length: 80 });
-	});
+    .container {
+      width: 80%;
+      margin: 0 auto;
+      background-color: #ffffff;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #428bca;
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+
+    .btn:hover {
+      background-color: #3071a9;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to Random HTML</h1>
+    <p>This is a randomly generated HTML code snippet with some styling. Feel free to modify it to suit your needs.</p>
+    <p>Here's a sample button:</p>
+    <a href="#" class="btn">Click Me!</a>
+  </div>
+</body>
+</html>
+`;
+
+
 </script>
 
-<svelte:head>
-	<title>Prism Syntax Highlighter Example</title>
-	<meta name="description" content="" />
-</svelte:head>
+<AceEditor
+	on:selectionChange={(obj) => console.log(obj.detail)}
+	on:paste={(obj) => console.log(obj.detail)}
+	on:input={() => (text = html(text))}
+	on:focus={() => console.log('focus')}
+	on:documentChange={(obj) => console.log(`document change : ${obj.detail}`)}
+	on:cut={() => console.log('cut')}
+	on:cursorChange={() => console.log('cursor change')}
+	on:copy={() => console.log('copy')}
+	on:init={(editor) => console.log(editor.detail)}
+	on:commandKey={(obj) => console.log(obj.detail)}
+	on:changeMode={(obj) => console.log(`change mode : ${obj.detail}`)}
+	on:blur={() => (text = html(text))}
+	width="100%"
+	height="300px"
+	lang="html"
+	theme="chrome"
+	value={text}
+/>
 
+<button on:click={() => (text = html(text))}> Click me </button>
 
-<Prism language="markup" code={html2} header="" />
+<div>{@html text}</div>
