@@ -3,7 +3,7 @@
 	import 'brace/mode/html';
 	import 'brace/theme/chrome';
 	import { html } from 'js-beautify';
-	var text = `<!DOCTYPE html>
+	let text = `<!DOCTYPE html>
 <html>
 <head>
   <title>Random HTML with Styling</title>
@@ -57,13 +57,17 @@
 </html>
 `;
 
-
+	function format() {
+		text = html(text);
+		console.log('hihih');
+		console.log(text);
+	}
 </script>
 
 <AceEditor
 	on:selectionChange={(obj) => console.log(obj.detail)}
 	on:paste={(obj) => console.log(obj.detail)}
-	on:input={() => (text = html(text))}
+	on:input={(obj) => console.log(obj.detail)}
 	on:focus={() => console.log('focus')}
 	on:documentChange={(obj) => console.log(`document change : ${obj.detail}`)}
 	on:cut={() => console.log('cut')}
@@ -72,14 +76,14 @@
 	on:init={(editor) => console.log(editor.detail)}
 	on:commandKey={(obj) => console.log(obj.detail)}
 	on:changeMode={(obj) => console.log(`change mode : ${obj.detail}`)}
-	on:blur={() => (text = html(text))}
+	on:blur={() => console.log('blur')}
 	width="100%"
 	height="300px"
 	lang="html"
 	theme="chrome"
-	value={text}
+	bind:value={text}
 />
 
-<button on:click={() => (text = html(text))}> Click me </button>
+<button on:click={format}> Click me </button>
 
 <div>{@html text}</div>
