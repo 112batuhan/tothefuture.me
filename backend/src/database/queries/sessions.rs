@@ -38,13 +38,21 @@ impl Db {
             .await?;
 
         match session {
-            Some(user) => Ok(user),
+            Some(user_session) => Ok(user_session),
             None => Err(DbError::MissingSessionToken),
         }
     }
 
-    pub async fn delete_session(&self, token: &str) -> Result<(), DbError> {
-        let session = self.get_session(token).await?;
+    pub async fn delete_session(&self, session_id: i32) -> Result<(), DbError> {
+        let session: Option<sessions::Model> = sessions::Entity::find_by_id(session_id)
+            .one(&self.db_con)
+            .await?;
+
+        let session = match session {
+            Some(user_session) => user_session,
+            None => return Err(DbError::MissingSessionToken),
+        };
+
         session.delete(&self.db_con).await?;
         Ok(())
     }

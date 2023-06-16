@@ -4,7 +4,7 @@ use axum::extract::State;
 use axum::http::header::COOKIE;
 use axum::http::{HeaderMap, HeaderValue, Request};
 use axum::response::Response;
-use axum::Form;
+use axum::{Extension, Form};
 use pbkdf2::password_hash::rand_core::OsRng;
 use pbkdf2::password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString};
 use pbkdf2::Pbkdf2;
@@ -13,7 +13,7 @@ use rand_core::RngCore;
 use serde::{Deserialize, Serialize};
 use tokio::sync::Mutex;
 
-use super::{ApiError, SharedState};
+use super::{ApiError, CurrentUser, SharedState};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct RequestUserBody {
@@ -42,10 +42,7 @@ async fn generate_session_token(random: Arc<Mutex<ChaCha8Rng>>) -> String {
     u128::from_le_bytes(u128_pool).to_string()
 }
 
-// TODO: Optimize this to get rid of clones
-// At this point I'm coding for 13 hours straight.
-// I just want to get this over with.
-fn extract_token(header: HeaderValue) -> String {
+fn extract_token(header: &HeaderValue) -> String {
     header
         .to_str()
         .unwrap()
@@ -98,29 +95,30 @@ pub async fn sign_in(
 
     Ok(headers)
 }
-pub async fn logout(
-    State(state): State<Arc<SharedState>>,
-    headers: HeaderMap,
-) -> Result<(), ApiError> {
-    let token = headers.get(COOKIE).unwrap();
-    let token = extract_token(token.clone());
 
-    state.database.delete_session(&token).await?;
+pub async fn logout(
+    Extension(session): Extension<CurrentUser>,
+    State(state): State<Arc<SharedState>>,
+) -> Result<(), ApiError> {
+    state.database.delete_session(session.get_id()).await?;
     Ok(())
 }
 
 pub async fn check_session_token<T>(
     State(state): State<Arc<SharedState>>,
-    request: Request<T>,
+    mut request: Request<T>,
     next: axum::middleware::Next<T>,
 ) -> Result<Response, ApiError> {
     let token_option = request.headers().get(COOKIE);
     let token = match token_option {
         None => return Err(ApiError::MissingSessionTokenInClientRequest),
-        Some(token) => extract_token(token.clone()),
+        Some(token) => extract_token(token),
     };
 
-    state.database.get_session(&token).await?;
+    let user_session = state.database.get_session(&token).await?;
+    request
+        .extensions_mut()
+        .insert(CurrentUser(user_session.id));
 
     Ok(next.run(request).await)
 }

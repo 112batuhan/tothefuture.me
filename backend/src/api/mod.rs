@@ -14,6 +14,16 @@ use tokio::sync::Mutex;
 use super::database::Db;
 use crate::database::DbError;
 
+#[derive(Clone)]
+pub struct CurrentUser(i32);
+
+impl CurrentUser {
+    // For readability. I don't like using .0 for single element tuples
+    pub fn get_id(self)->i32{
+        self.0
+    }
+}
+
 pub struct SharedState {
     database: Db,
     random: Arc<Mutex<ChaCha8Rng>>,
