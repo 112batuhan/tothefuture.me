@@ -13,3 +13,6 @@
 <div>
 	<a href="/email_import">email import</a>
 </div>
+<div>
+	<a href="/email_selector">email selector</a>
+</div>

@@ -1,4 +1,6 @@
 <script>
+	import { goto } from '$app/navigation';
+
 	// @ts-nocheck
 
 	let email_body = '';
@@ -15,6 +17,7 @@
 			}
 		});
 		if (res.ok) {
+			goto('/');
 		}
 	}
 </script>

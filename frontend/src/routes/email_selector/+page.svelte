@@ -1,28 +1,18 @@
 <script>
 	// @ts-nocheck
+	import { onMount } from 'svelte';
+	let emails = '';
 
-	let email_body = '';
-
-	async function insert_email() {
-		const res = await fetch('http://127.0.0.1:3040/insert_email', {
-			method: 'DELETE',
+	onMount(async () => {
+		let res = await fetch('http://127.0.0.1:3040/get_emails', {
+			method: 'GET',
 			credentials: 'include'
-		});
-		if (res.ok) {
-			
-		}
-	}
+		})
+			.then((response) => response.json())
+			.then((json) => {
+				emails = JSON.stringify(json);
+			});
+	});
 </script>
 
-<textarea class="email_input" bind:value={email_body} />
-<div>
-	<input type="submit" value="submit" />
-</div>
-
-<style>
-	.email_input {
-		height: 600px;
-		width: 600px;
-	}
-
-</style>
+{emails}
