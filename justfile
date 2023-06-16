@@ -10,7 +10,7 @@ stop-everything:
     docker compose -f docker-compose.yml down --remove-orphans
 
 generate-entities:
-    sea-orm-cli generate entity -u $DATABASE_URL -o backend/src/entities
+    sea-orm-cli generate entity -u $DATABASE_URL -o backend/src/entities --with-serde serialize
 
 migrate-refresh:
     cd backend && sea-orm-cli migrate refresh

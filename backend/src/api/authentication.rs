@@ -100,7 +100,7 @@ pub async fn logout(
     Extension(session): Extension<CurrentUser>,
     State(state): State<Arc<SharedState>>,
 ) -> Result<(), ApiError> {
-    state.database.delete_session(session.get_id()).await?;
+    state.database.delete_session(session.get_user_id()).await?;
     Ok(())
 }
 

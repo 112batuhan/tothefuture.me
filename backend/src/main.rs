@@ -5,11 +5,12 @@ pub mod queries;
 use std::net::SocketAddr;
 
 use api::authentication::{check_session_token, logout, sign_in, sign_up};
+use api::emails::{create_email, get_emails};
 use api::SharedState;
 use axum::http::{header, Method};
-use axum::routing::{delete, post};
+use axum::routing::{delete, get, post};
 use axum::{middleware, Router};
-use tower_http::cors::{CorsLayer};
+use tower_http::cors::CorsLayer;
 
 #[tokio::main]
 async fn main() {
@@ -32,6 +33,8 @@ async fn main() {
         .allow_credentials(true);
 
     let app = Router::new()
+        .route("/get_emails", get(get_emails))
+        .route("/create_email", post(create_email))
         .route("/logout", delete(logout))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),

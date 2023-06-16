@@ -19,7 +19,7 @@ pub struct CurrentUser(i64);
 
 impl CurrentUser {
     // For readability. I don't like using .0 for single element tuples
-    pub fn get_id(self) -> i64 {
+    pub fn get_user_id(self) -> i64 {
         self.0
     }
 }
@@ -59,6 +59,10 @@ pub enum ApiError {
     WrongPassword,
     #[error("Missing token from the client request.")]
     MissingSessionTokenInClientRequest,
+    #[error("Bad E-Mail.")]
+    BadEmail,
+    #[error("Date parse error: {0}")]
+    BadDate(#[from] chrono::ParseError),
 }
 
 impl IntoResponse for ApiError {
@@ -82,6 +86,8 @@ impl ApiError {
                 DbError::MissingSessionToken => StatusCode::UNAUTHORIZED,
             },
             ApiError::MissingSessionTokenInClientRequest => StatusCode::UNAUTHORIZED,
+            ApiError::BadEmail => StatusCode::BAD_REQUEST,
+            ApiError::BadDate(_) => StatusCode::BAD_REQUEST,
         }
     }
 
@@ -99,6 +105,8 @@ impl ApiError {
             ApiError::MissingSessionTokenInClientRequest => {
                 "missing_token_in_client_request".to_string()
             }
+            ApiError::BadEmail => "bad_email".to_string(),
+            ApiError::BadDate(_) => "bad_date".to_string(),
         };
 
         let message = self.to_string();
