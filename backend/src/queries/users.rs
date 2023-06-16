@@ -3,14 +3,14 @@ use sea_orm::ActiveValue::Set;
 use sea_orm::{ColumnTrait, DbErr, EntityTrait, QueryFilter};
 
 use super::{Db, DbError, UNIQUE_KEY_VIOLATION_CODE};
-use crate::database::entities::prelude::*;
-use crate::database::entities::*;
+use crate::entities::prelude::*;
+use crate::entities::*;
 
 impl Db {
-    pub async fn create_user(&self, email: &str, password: &str) -> Result<(), DbError> {
+    pub async fn create_user(&self, email: String, password: String) -> Result<(), DbError> {
         let user_to_insert = users::ActiveModel {
-            email: Set(email.to_string()),
-            password: Set(password.to_string()),
+            email: Set(email),
+            password: Set(password),
             ..Default::default()
         };
         let insert_result = Users::insert(user_to_insert).exec(&self.db_con).await;

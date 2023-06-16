@@ -4,17 +4,17 @@ use sea_orm::ActiveValue::Set;
 use sea_orm::{ColumnTrait, EntityTrait, ModelTrait, QueryFilter};
 
 use super::{Db, DbError};
-use crate::database::entities::prelude::*;
-use crate::database::entities::*;
+use crate::entities::prelude::*;
+use crate::entities::*;
 
 impl Db {
-    pub async fn upsert_session(&self, user_id: i64, token: &str) -> Result<(), DbError> {
+    pub async fn upsert_session(&self, user_id: i64, token: String) -> Result<(), DbError> {
         let expiration: DateTime<Utc> = Utc::now() + Duration::hours(1);
         let expiration: DateTime<FixedOffset> = expiration.into();
 
         let session_to_insert = sessions::ActiveModel {
             id: Set(user_id),
-            token: Set(token.to_string()),
+            token: Set(token),
             expires: Set(expiration),
         };
 

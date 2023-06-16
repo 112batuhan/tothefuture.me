@@ -1,5 +1,6 @@
 pub mod api;
-pub mod database;
+pub mod entities;
+pub mod queries;
 
 use std::net::SocketAddr;
 

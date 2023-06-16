@@ -2,8 +2,6 @@ pub mod emails;
 pub mod sessions;
 pub mod users;
 
-
-
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use thiserror::Error;
 use tracing::log;

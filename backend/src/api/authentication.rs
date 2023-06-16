@@ -61,7 +61,7 @@ pub async fn sign_up(
 
     state
         .database
-        .create_user(&body.email, &hashed_password)
+        .create_user(body.email, hashed_password)
         .await?;
 
     Ok(())
@@ -84,7 +84,7 @@ pub async fn sign_in(
     let session_token = generate_session_token(state.random.clone()).await;
     state
         .database
-        .upsert_session(user.id, &session_token)
+        .upsert_session(user.id, session_token.clone())
         .await?;
 
     let mut headers = HeaderMap::new();

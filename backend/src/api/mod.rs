@@ -1,4 +1,5 @@
 pub mod authentication;
+pub mod emails;
 
 use std::sync::Arc;
 
@@ -11,7 +12,7 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use tokio::sync::Mutex;
 
-use crate::database::queries::{Db, DbError};
+use crate::queries::{Db, DbError};
 
 #[derive(Clone)]
 pub struct CurrentUser(i64);
