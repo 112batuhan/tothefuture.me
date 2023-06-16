@@ -2,16 +2,12 @@ use sea_orm::error::RuntimeErr;
 use sea_orm::ActiveValue::Set;
 use sea_orm::{ColumnTrait, DbErr, EntityTrait, QueryFilter};
 
+use super::{Db, DbError, UNIQUE_KEY_VIOLATION_CODE};
 use crate::database::entities::prelude::*;
 use crate::database::entities::*;
-use crate::database::{Db, DbError, UNIQUE_KEY_VIOLATION_CODE};
 
 impl Db {
-    pub async fn create_user(
-        &self,
-        email: &str,
-        password: &str,
-    ) -> Result<(), DbError> {
+    pub async fn create_user(&self, email: &str, password: &str) -> Result<(), DbError> {
         let user_to_insert = users::ActiveModel {
             email: Set(email.to_string()),
             password: Set(password.to_string()),
@@ -47,5 +43,4 @@ impl Db {
             None => Err(DbError::EmptyQuery),
         }
     }
-
 }

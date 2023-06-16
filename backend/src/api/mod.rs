@@ -11,15 +11,14 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use tokio::sync::Mutex;
 
-use super::database::Db;
-use crate::database::DbError;
+use crate::database::queries::{Db, DbError};
 
 #[derive(Clone)]
 pub struct CurrentUser(i64);
 
 impl CurrentUser {
     // For readability. I don't like using .0 for single element tuples
-    pub fn get_id(self)->i64{
+    pub fn get_id(self) -> i64 {
         self.0
     }
 }

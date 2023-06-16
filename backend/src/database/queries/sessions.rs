@@ -3,9 +3,9 @@ use sea_orm::sea_query::OnConflict;
 use sea_orm::ActiveValue::Set;
 use sea_orm::{ColumnTrait, EntityTrait, ModelTrait, QueryFilter};
 
+use super::{Db, DbError};
 use crate::database::entities::prelude::*;
 use crate::database::entities::*;
-use crate::database::{Db, DbError};
 
 impl Db {
     pub async fn upsert_session(&self, user_id: i64, token: &str) -> Result<(), DbError> {
