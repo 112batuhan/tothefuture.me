@@ -1,4 +1,6 @@
 <script lang="ts">
+	// @ts-nocheck
+	// nocheck is used to suppress svelte-ace error.
 	import type { SvelteComponentTyped } from 'svelte';
 	import { AceEditor } from 'svelte-ace';
 	import 'brace/mode/html';
@@ -63,6 +65,8 @@
 	theme="chrome"
 	bind:value={text}
 />
+
+<svelte:component this={AceEditor} />
 
 <button on:click={format}> Click me </button>
 
