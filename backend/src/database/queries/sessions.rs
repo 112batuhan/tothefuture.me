@@ -8,7 +8,7 @@ use crate::database::entities::*;
 use crate::database::{Db, DbError};
 
 impl Db {
-    pub async fn upsert_session(&self, user_id: i32, token: &str) -> Result<(), DbError> {
+    pub async fn upsert_session(&self, user_id: i64, token: &str) -> Result<(), DbError> {
         let expiration: DateTime<Utc> = Utc::now() + Duration::hours(1);
         let expiration: DateTime<FixedOffset> = expiration.into();
 
@@ -43,7 +43,7 @@ impl Db {
         }
     }
 
-    pub async fn delete_session(&self, session_id: i32) -> Result<(), DbError> {
+    pub async fn delete_session(&self, session_id: i64) -> Result<(), DbError> {
         let session: Option<sessions::Model> = sessions::Entity::find_by_id(session_id)
             .one(&self.db_con)
             .await?;

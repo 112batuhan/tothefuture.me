@@ -6,11 +6,11 @@ use sea_orm::entity::prelude::*;
 #[sea_orm(table_name = "emails")]
 pub struct Model {
     #[sea_orm(primary_key)]
-    pub id: i32,
-    pub owner: i32,
+    pub id: i64,
+    pub owner: i64,
     pub subject: String,
     pub body: String,
-    pub send_date: DateTimeWithTimeZone,
+    pub send_date: Date,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

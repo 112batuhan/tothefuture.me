@@ -15,17 +15,17 @@ impl MigrationTrait for Migration {
                     .if_not_exists()
                     .col(
                         ColumnDef::new(Emails::Id)
-                            .integer()
+                            .big_integer()
                             .not_null()
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Emails::Owner).integer().not_null())
+                    .col(ColumnDef::new(Emails::Owner).big_integer().not_null())
                     .col(ColumnDef::new(Emails::Subject).string().not_null())
                     .col(ColumnDef::new(Emails::Body).string().not_null())
                     .col(
                         ColumnDef::new(Emails::SendDate)
-                            .timestamp_with_time_zone()
+                            .date()
                             .not_null(),
                     )
                     .to_owned(),

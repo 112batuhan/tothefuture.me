@@ -15,11 +15,11 @@ use super::database::Db;
 use crate::database::DbError;
 
 #[derive(Clone)]
-pub struct CurrentUser(i32);
+pub struct CurrentUser(i64);
 
 impl CurrentUser {
     // For readability. I don't like using .0 for single element tuples
-    pub fn get_id(self)->i32{
+    pub fn get_id(self)->i64{
         self.0
     }
 }
