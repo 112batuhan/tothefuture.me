@@ -24,15 +24,5 @@
 		height: 600px;
 		width: 600px;
 	}
-	.form_field {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		padding-inline: 1rem;
-	}
-	.submit_button {
-		margin-top: 0.5rem;
-		text-align: center;
-		margin-bottom: 0.5rem;
-	}
+
 </style>
