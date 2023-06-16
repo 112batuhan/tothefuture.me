@@ -28,7 +28,7 @@
 			body: formData.toString()
 		});
 		if (res.ok) {
-			goto('/success');
+			goto('/');
 		}
 	}
 </script>

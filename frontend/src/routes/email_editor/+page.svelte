@@ -1,13 +1,11 @@
 <script lang="ts">
 	// @ts-nocheck
 	// nocheck is used to suppress svelte-ace error.
-	import type { SvelteComponentTyped } from 'svelte';
 	import { AceEditor } from 'svelte-ace';
 	import 'brace/mode/html';
 	import 'brace/theme/chrome';
 	import { html } from 'js-beautify';
 	import { onMount } from 'svelte';
-	import sanitizeHtml from 'sanitize-html';
 
 	let text = `<!DOCTYPE html>
               <html>

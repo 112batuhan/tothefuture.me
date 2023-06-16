@@ -1,12 +1,15 @@
-<form>
+<div>
 	<a href="/sign_up">sign up</a>
-</form>
-<form>
+</div>
+<div>
 	<a href="/sign_in">sign in</a>
-</form>
-<form>
-	<a href="/success">success</a>
-</form>
-<form>
-	<a href="/email">email</a>
-</form>
+</div>
+<div>
+	<a href="/log_out">logout</a>
+</div>
+<div>
+	<a href="/email_editor">email editor</a>
+</div>
+<div>
+	<a href="/email_import">email import</a>
+</div>
