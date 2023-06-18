@@ -1,9 +1,9 @@
 use std::sync::Arc;
 
 use axum::extract::State;
-use axum::http::header::COOKIE;
-use axum::http::{HeaderMap, HeaderValue, Request};
-use axum::response::{Response, IntoResponse};
+use axum::http::header::{self, COOKIE};
+use axum::http::{HeaderValue, Request};
+use axum::response::{IntoResponse, Response};
 use axum::{Extension, Form, Json};
 use pbkdf2::password_hash::rand_core::OsRng;
 use pbkdf2::password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString};
@@ -87,15 +87,14 @@ pub async fn sign_in(
         .upsert_session(user.id, session_token.clone())
         .await?;
 
-    let mut headers = HeaderMap::new();
     let cookie_value = format!("session_token={}; Max-Age=3600", session_token);
-    // Handle the unwrap here, I feel like this is unfaillable but might as well.
-    // There used to be an error for this but now I don't know where.
-    headers.insert("Set-Cookie", HeaderValue::from_str(&cookie_value).unwrap());
-   
-   
-   
-    let response = (Json(user), headers).into_response();
+
+    let mut response = Json(user).into_response();
+    response.headers_mut().insert(
+        header::SET_COOKIE,
+        header::HeaderValue::from_str(&cookie_value).unwrap(),
+    );
+
     Ok(response)
 }
 
