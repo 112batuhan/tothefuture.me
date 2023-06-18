@@ -72,7 +72,7 @@ pub async fn sign_in(
     State(state): State<Arc<SharedState>>,
     Form(body): Form<RequestUserBody>,
 ) -> Result<Response, ApiError> {
-    let user = state.database.find_user_by_email(&body.email).await?;
+    let user = state.database.get_user_by_email(&body.email).await?;
     let parsed_hash = PasswordHash::new(&user.password).unwrap();
     let password_result = Pbkdf2.verify_password(body.password.as_bytes(), &parsed_hash);
     if let Err(err) = password_result {
@@ -112,10 +112,7 @@ pub async fn auto_login(
     State(state): State<Arc<SharedState>>,
 ) -> Result<Json<users::Model>, ApiError> {
     Ok(Json(
-        state
-            .database
-            .find_user_by_id(session.get_user_id())
-            .await?,
+        state.database.get_user_by_id(session.get_user_id()).await?,
     ))
 }
 

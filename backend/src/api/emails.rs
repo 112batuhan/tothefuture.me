@@ -1,7 +1,7 @@
 use std::str::FromStr;
 use std::sync::Arc;
 
-use axum::extract::State;
+use axum::extract::{Path, State};
 use axum::{Extension, Json};
 use mail_parser::Message;
 use serde::{Deserialize, Serialize};
@@ -51,4 +51,21 @@ pub async fn get_emails(
         .await?;
 
     Ok(Json(email_list))
+}
+
+pub async fn send_demo_email(
+    Path(email_id): Path<i64>,
+    Extension(session): Extension<CurrentUser>,
+    State(state): State<Arc<SharedState>>,
+) -> Result<(), ApiError> {
+    let email = state.database.get_emails_by_id(email_id).await?;
+    if email.owner != session.get_user_id() {
+        // handle error
+    }
+    let user = state.database.get_user_by_id(session.get_user_id()).await?;
+    state
+        .external_request
+        .send_email(user.email, email.subject, email.body)
+        .await?;
+    Ok(())
 }

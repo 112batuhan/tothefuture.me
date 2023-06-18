@@ -13,13 +13,14 @@ use thiserror::Error;
 use tokio::sync::Mutex;
 
 use crate::queries::{Db, DbError};
+use crate::resend::{self, ExternalRequest};
 
 #[derive(Clone)]
 pub struct CurrentUser(i64);
 
 impl CurrentUser {
     // For readability. I don't like using .0 for single element tuples
-    pub fn get_user_id(self) -> i64 {
+    pub fn get_user_id(&self) -> i64 {
         self.0
     }
 }
@@ -27,6 +28,7 @@ impl CurrentUser {
 pub struct SharedState {
     database: Db,
     random: Arc<Mutex<ChaCha8Rng>>,
+    external_request: ExternalRequest,
 }
 
 impl SharedState {
@@ -36,7 +38,13 @@ impl SharedState {
         let random = ChaCha8Rng::seed_from_u64(OsRng.next_u64());
         let random = Arc::new(Mutex::new(random));
 
-        Ok(Arc::new(SharedState { database, random }))
+        let external_request = ExternalRequest::new();
+
+        Ok(Arc::new(SharedState {
+            database,
+            random,
+            external_request,
+        }))
     }
 }
 
@@ -63,6 +71,9 @@ pub enum ApiError {
     BadEmail,
     #[error("Date parse error: {0}")]
     BadDate(#[from] chrono::ParseError),
+    // later improve this. reqwest errors are way to convoluted.
+    #[error("Error while Email sending: {0}")]
+    EmailSend(#[from] resend::ResendError),
 }
 
 impl IntoResponse for ApiError {
@@ -88,6 +99,8 @@ impl ApiError {
             ApiError::MissingSessionTokenInClientRequest => StatusCode::UNAUTHORIZED,
             ApiError::BadEmail => StatusCode::BAD_REQUEST,
             ApiError::BadDate(_) => StatusCode::BAD_REQUEST,
+            // later improve this.
+            ApiError::EmailSend(_) => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 
@@ -107,6 +120,7 @@ impl ApiError {
             }
             ApiError::BadEmail => "bad_email".to_string(),
             ApiError::BadDate(_) => "bad_date".to_string(),
+            ApiError::EmailSend(_) => "email_send_error".to_string(),
         };
 
         let message = self.to_string();

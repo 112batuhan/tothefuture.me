@@ -9,7 +9,6 @@
 	let send_date = '';
 
 	async function insert_email() {
-		console.log(send_date);
 		const res = await fetch('http://127.0.0.1:3040/create_email', {
 			method: 'POST',
 			credentials: 'include',

@@ -32,7 +32,7 @@ impl Db {
         &self,
         user_id: i64,
     ) -> Result<Vec<entities::emails::Model>, DbError> {
-        let email_vec: Vec<emails::Model> = emails::Entity::find()
+        let email_vec = emails::Entity::find()
             .filter(emails::Column::Owner.eq(user_id))
             .all(&self.db_con)
             .await?;
@@ -41,6 +41,20 @@ impl Db {
             Err(DbError::EmptyQuery)
         } else {
             Ok(email_vec)
+        }
+    }
+
+    pub async fn get_emails_by_id(
+        &self,
+        email_id: i64,
+    ) -> Result<entities::emails::Model, DbError> {
+        let email = emails::Entity::find_by_id(email_id)
+            .one(&self.db_con)
+            .await?;
+
+        match email {
+            Some(email) => Ok(email),
+            None => Err(DbError::EmptyQuery),
         }
     }
 }

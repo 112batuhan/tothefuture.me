@@ -32,7 +32,7 @@ impl Db {
         }
     }
 
-    pub async fn find_user_by_email(&self, email: &str) -> Result<users::Model, DbError> {
+    pub async fn get_user_by_email(&self, email: &str) -> Result<users::Model, DbError> {
         let user: Option<users::Model> = users::Entity::find()
             .filter(users::Column::Email.eq(email))
             .one(&self.db_con)
@@ -44,7 +44,7 @@ impl Db {
         }
     }
 
-    pub async fn find_user_by_id(&self, user_id: i64) -> Result<users::Model, DbError> {
+    pub async fn get_user_by_id(&self, user_id: i64) -> Result<users::Model, DbError> {
         let user: Option<users::Model> =
             users::Entity::find_by_id(user_id).one(&self.db_con).await?;
 
