@@ -10,6 +10,8 @@ pub struct Model {
     pub id: i64,
     #[sea_orm(unique)]
     pub email: String,
+    #[sea_orm(column_name = "_password")]
+    #[serde(skip)]
     pub password: String,
 }
 

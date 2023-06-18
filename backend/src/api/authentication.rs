@@ -3,8 +3,8 @@ use std::sync::Arc;
 use axum::extract::State;
 use axum::http::header::COOKIE;
 use axum::http::{HeaderMap, HeaderValue, Request};
-use axum::response::Response;
-use axum::{Extension, Form};
+use axum::response::{Response, IntoResponse};
+use axum::{Extension, Form, Json};
 use pbkdf2::password_hash::rand_core::OsRng;
 use pbkdf2::password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString};
 use pbkdf2::Pbkdf2;
@@ -70,7 +70,7 @@ pub async fn sign_up(
 pub async fn sign_in(
     State(state): State<Arc<SharedState>>,
     Form(body): Form<RequestUserBody>,
-) -> Result<HeaderMap, ApiError> {
+) -> Result<Response, ApiError> {
     let user = state.database.find_user_by_email(&body.email).await?;
     let parsed_hash = PasswordHash::new(&user.password).unwrap();
     let password_result = Pbkdf2.verify_password(body.password.as_bytes(), &parsed_hash);
@@ -92,8 +92,11 @@ pub async fn sign_in(
     // Handle the unwrap here, I feel like this is unfaillable but might as well.
     // There used to be an error for this but now I don't know where.
     headers.insert("Set-Cookie", HeaderValue::from_str(&cookie_value).unwrap());
-
-    Ok(headers)
+   
+   
+   
+    let response = (Json(user), headers).into_response();
+    Ok(response)
 }
 
 pub async fn logout(

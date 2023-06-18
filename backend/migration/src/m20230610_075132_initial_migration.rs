@@ -1,5 +1,8 @@
 use sea_orm_migration::prelude::*;
 
+#[cfg(feature = "derive")]
+use sea_query::Iden;
+
 #[derive(DeriveMigrationName)]
 pub struct Migration;
 
@@ -47,5 +50,6 @@ enum Users {
     Table,
     Id,
     Email,
+    #[iden = "_password"]
     Password,
 }

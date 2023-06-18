@@ -43,4 +43,14 @@ impl Db {
             None => Err(DbError::EmptyQuery),
         }
     }
+
+    pub async fn find_user_by_id(&self, user_id: i64) -> Result<users::Model, DbError> {
+        let user: Option<users::Model> =
+            users::Entity::find_by_id(user_id).one(&self.db_con).await?;
+
+        match user {
+            Some(user) => Ok(user),
+            None => Err(DbError::EmptyQuery),
+        }
+    }
 }
