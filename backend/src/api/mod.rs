@@ -74,6 +74,8 @@ pub enum ApiError {
     // later improve this. reqwest errors are way to convoluted.
     #[error("Error while Email sending: {0}")]
     EmailSend(#[from] resend::ResendError),
+    #[error("User tried to send a mail that doesn't belong to them.")]
+    UnauthorizedEmail,
 }
 
 impl IntoResponse for ApiError {
@@ -101,6 +103,7 @@ impl ApiError {
             ApiError::BadDate(_) => StatusCode::BAD_REQUEST,
             // later improve this.
             ApiError::EmailSend(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            ApiError::UnauthorizedEmail => StatusCode::UNAUTHORIZED,
         }
     }
 
@@ -121,6 +124,7 @@ impl ApiError {
             ApiError::BadEmail => "bad_email".to_string(),
             ApiError::BadDate(_) => "bad_date".to_string(),
             ApiError::EmailSend(_) => "email_send_error".to_string(),
+            ApiError::UnauthorizedEmail => "unauthorized_email_send".to_string(),
         };
 
         let message = self.to_string();

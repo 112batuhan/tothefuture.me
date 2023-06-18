@@ -60,7 +60,7 @@ pub async fn send_demo_email(
 ) -> Result<(), ApiError> {
     let email = state.database.get_emails_by_id(email_id).await?;
     if email.owner != session.get_user_id() {
-        // handle error
+        return Err(ApiError::UnauthorizedEmail);
     }
     let user = state.database.get_user_by_id(session.get_user_id()).await?;
     state
