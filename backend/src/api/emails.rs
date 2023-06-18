@@ -11,6 +11,7 @@ use crate::entities::emails;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct RequestEmailBody {
+    is_html: bool,
     email: String,
     date: String,
 }

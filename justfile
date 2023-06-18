@@ -15,3 +15,4 @@ generate-entities:
 migrate-refresh:
     cd backend && sea-orm-cli migrate refresh
 
+update_db: start-db migrate-refresh generate-entities

@@ -22,12 +22,9 @@ impl MigrationTrait for Migration {
                     )
                     .col(ColumnDef::new(Emails::Owner).big_integer().not_null())
                     .col(ColumnDef::new(Emails::Subject).string().not_null())
+                    .col(ColumnDef::new(Emails::IsHtml).boolean().not_null())
                     .col(ColumnDef::new(Emails::Body).string().not_null())
-                    .col(
-                        ColumnDef::new(Emails::SendDate)
-                            .date()
-                            .not_null(),
-                    )
+                    .col(ColumnDef::new(Emails::SendDate).date().not_null())
                     .to_owned(),
             )
             .await
@@ -49,6 +46,7 @@ enum Emails {
     Id,
     Owner,
     Subject,
+    IsHtml,
     Body,
     SendDate,
 }

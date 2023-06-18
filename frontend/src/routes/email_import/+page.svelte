@@ -3,6 +3,8 @@
 
 	// @ts-nocheck
 
+	//this is forced for this page. rework later.
+	let is_html = true;
 	let email_body = '';
 	let send_date = '';
 

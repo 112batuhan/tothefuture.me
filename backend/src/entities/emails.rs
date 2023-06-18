@@ -10,6 +10,7 @@ pub struct Model {
     pub id: i64,
     pub owner: i64,
     pub subject: String,
+    pub is_html: bool,
     pub body: String,
     pub send_date: Date,
 }
