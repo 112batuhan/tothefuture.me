@@ -4,7 +4,7 @@ pub mod queries;
 
 use std::net::SocketAddr;
 
-use api::authentication::{check_session_token, logout, sign_in, sign_up};
+use api::authentication::{auto_login, check_session_token, logout, sign_in, sign_up};
 use api::emails::{create_email, get_emails};
 use api::SharedState;
 use axum::http::{header, Method};
@@ -33,6 +33,7 @@ async fn main() {
         .allow_credentials(true);
 
     let app = Router::new()
+        .route("/auto_login", get(auto_login))
         .route("/get_emails", get(get_emails))
         .route("/create_email", post(create_email))
         .route("/logout", delete(logout))

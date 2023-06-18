@@ -14,6 +14,7 @@ use serde::{Deserialize, Serialize};
 use tokio::sync::Mutex;
 
 use super::{ApiError, CurrentUser, SharedState};
+use crate::entities::users;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct RequestUserBody {
@@ -104,6 +105,18 @@ pub async fn logout(
 ) -> Result<(), ApiError> {
     state.database.delete_session(session.get_user_id()).await?;
     Ok(())
+}
+
+pub async fn auto_login(
+    Extension(session): Extension<CurrentUser>,
+    State(state): State<Arc<SharedState>>,
+) -> Result<Json<users::Model>, ApiError> {
+    Ok(Json(
+        state
+            .database
+            .find_user_by_id(session.get_user_id())
+            .await?,
+    ))
 }
 
 pub async fn check_session_token<T>(
