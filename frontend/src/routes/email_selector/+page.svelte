@@ -1,6 +1,9 @@
 <script>
 	// @ts-nocheck
+
 	import { onMount } from 'svelte';
+	import { each } from 'svelte/internal';
+
 	let emails = '';
 
 	onMount(async () => {
@@ -10,9 +13,15 @@
 		})
 			.then((response) => response.json())
 			.then((json) => {
-				emails = JSON.stringify(json);
+				emails = json;
 			});
 	});
 </script>
 
-{emails}
+{#each emails as email}
+	<div>
+		{email.subject}, {email.is_html === true ? 'HTML' : 'MD'}, {email.send_date}
+	</div>
+{:else}
+	<div>there is nothing</div>
+{/each}

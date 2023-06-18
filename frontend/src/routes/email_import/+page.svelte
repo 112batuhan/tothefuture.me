@@ -13,7 +13,7 @@
 		const res = await fetch('http://127.0.0.1:3040/create_email', {
 			method: 'POST',
 			credentials: 'include',
-			body: JSON.stringify({ email: email_body, date: send_date }),
+			body: JSON.stringify({ is_html: is_html, email: email_body, date: send_date }),
 			headers: {
 				'Content-Type': 'application/json'
 			}
