@@ -13,6 +13,8 @@ pub struct Model {
     pub is_html: bool,
     pub body: String,
     pub send_date: Date,
+    pub is_sent: bool,
+    pub is_hidden: bool,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

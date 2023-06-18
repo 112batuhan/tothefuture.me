@@ -25,6 +25,18 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Emails::IsHtml).boolean().not_null())
                     .col(ColumnDef::new(Emails::Body).string().not_null())
                     .col(ColumnDef::new(Emails::SendDate).date().not_null())
+                    .col(
+                        ColumnDef::new(Emails::IsSent)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
+                    .col(
+                        ColumnDef::new(Emails::IsHidden)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
                     .to_owned(),
             )
             .await
@@ -49,4 +61,6 @@ enum Emails {
     IsHtml,
     Body,
     SendDate,
+    IsSent,
+    IsHidden,
 }
