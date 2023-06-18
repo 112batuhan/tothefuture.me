@@ -2,20 +2,22 @@ use sea_orm::ActiveValue::Set;
 use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
 
 use super::{Db, DbError};
-use crate::entities::{self, *};
 use crate::entities::prelude::*;
+use crate::entities::{self, *};
 
 impl Db {
     pub async fn create_email(
         &self,
         owner: i64,
         subject: String,
+        is_html: bool,
         body: String,
         send_date: chrono::NaiveDate,
     ) -> Result<(), DbError> {
         let email_to_insert = emails::ActiveModel {
             owner: Set(owner),
             subject: Set(subject),
+            is_html: Set(is_html),
             body: Set(body),
             send_date: Set(send_date),
             ..Default::default()

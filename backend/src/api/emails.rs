@@ -31,6 +31,8 @@ pub async fn create_email(
         .create_email(
             session.get_user_id(),
             subject.to_string(),
+            // Rework later to allow md aswell.
+            true,
             body.into(),
             send_date,
         )
