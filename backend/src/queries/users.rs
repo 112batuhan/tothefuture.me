@@ -13,7 +13,7 @@ impl Db {
             password: Set(password),
             ..Default::default()
         };
-        let insert_result = Users::insert(user_to_insert).exec(&self.db_con).await;
+        let insert_result = Users::insert(user_to_insert).exec(&self.pg_con).await;
         match insert_result {
             Ok(_) => Ok(()),
             Err(orm_error) => match orm_error {
@@ -35,7 +35,7 @@ impl Db {
     pub async fn get_user_by_email(&self, email: &str) -> Result<users::Model, DbError> {
         let user: Option<users::Model> = users::Entity::find()
             .filter(users::Column::Email.eq(email))
-            .one(&self.db_con)
+            .one(&self.pg_con)
             .await?;
 
         match user {
@@ -46,7 +46,7 @@ impl Db {
 
     pub async fn get_user_by_id(&self, user_id: i64) -> Result<users::Model, DbError> {
         let user: Option<users::Model> =
-            users::Entity::find_by_id(user_id).one(&self.db_con).await?;
+            users::Entity::find_by_id(user_id).one(&self.pg_con).await?;
 
         match user {
             Some(user) => Ok(user),

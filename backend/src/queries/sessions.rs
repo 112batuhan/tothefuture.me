@@ -25,7 +25,7 @@ impl Db {
                     .update_column(sessions::Column::Expires)
                     .to_owned(),
             )
-            .exec(&self.db_con)
+            .exec(&self.pg_con)
             .await?;
 
         Ok(())
@@ -34,7 +34,7 @@ impl Db {
     pub async fn get_session(&self, token: &str) -> Result<sessions::Model, DbError> {
         let session: Option<sessions::Model> = sessions::Entity::find()
             .filter(sessions::Column::Token.eq(token))
-            .one(&self.db_con)
+            .one(&self.pg_con)
             .await?;
 
         match session {
@@ -45,7 +45,7 @@ impl Db {
 
     pub async fn delete_session(&self, session_id: i64) -> Result<(), DbError> {
         let session: Option<sessions::Model> = sessions::Entity::find_by_id(session_id)
-            .one(&self.db_con)
+            .one(&self.pg_con)
             .await?;
 
         let session = match session {
@@ -53,7 +53,7 @@ impl Db {
             None => return Err(DbError::MissingSessionToken),
         };
 
-        session.delete(&self.db_con).await?;
+        session.delete(&self.pg_con).await?;
         Ok(())
     }
 }

@@ -24,7 +24,7 @@ impl Db {
         };
         // No explicit error handling needed for this operation as there can't be any unique key
         // violations. Maybe in the future we can set a limit per person.
-        Emails::insert(email_to_insert).exec(&self.db_con).await?;
+        Emails::insert(email_to_insert).exec(&self.pg_con).await?;
         Ok(())
     }
 
@@ -34,7 +34,7 @@ impl Db {
     ) -> Result<Vec<entities::emails::Model>, DbError> {
         let email_vec = emails::Entity::find()
             .filter(emails::Column::Owner.eq(user_id))
-            .all(&self.db_con)
+            .all(&self.pg_con)
             .await?;
 
         if email_vec.len() == 0 {
@@ -49,7 +49,7 @@ impl Db {
         email_id: i64,
     ) -> Result<entities::emails::Model, DbError> {
         let email = emails::Entity::find_by_id(email_id)
-            .one(&self.db_con)
+            .one(&self.pg_con)
             .await?;
 
         match email {

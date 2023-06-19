@@ -1,7 +1,12 @@
 set dotenv-load := true
 
-start-db: 
+start-postgres: 
     docker compose -f docker-compose.yml up postgres -d --force-recreate
+
+start-redis:
+    docker compose -f docker-compose.yml up redis -d --force-recreate
+
+start-db: start-postgres start-redis
 
 start-pgadmin:
     docker compose -f docker-compose.yml up pgadmin -d --force-recreate
@@ -15,4 +20,4 @@ generate-entities:
 migrate-refresh:
     cd backend && sea-orm-cli migrate refresh
 
-update_db: start-db migrate-refresh generate-entities
+update_db: start-postgres migrate-refresh generate-entities
