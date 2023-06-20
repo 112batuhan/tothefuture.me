@@ -37,7 +37,7 @@ impl Db {
             .all(&self.pg_con)
             .await?;
 
-        if email_vec.len() == 0 {
+        if email_vec.is_empty() {
             Err(DbError::EmptyQuery)
         } else {
             Ok(email_vec)
@@ -51,10 +51,6 @@ impl Db {
         let email = emails::Entity::find_by_id(email_id)
             .one(&self.pg_con)
             .await?;
-
-        match email {
-            Some(email) => Ok(email),
-            None => Err(DbError::EmptyQuery),
-        }
+        email.ok_or(DbError::EmptyQuery)
     }
 }

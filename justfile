@@ -20,4 +20,4 @@ generate-entities:
 migrate-refresh:
     cd backend && sea-orm-cli migrate refresh
 
-update_db: start-postgres migrate-refresh generate-entities
+update-db: start-postgres migrate-refresh generate-entities

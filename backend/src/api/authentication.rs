@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use axum::extract::State;
 use axum::http::header::{self, COOKIE};
-use axum::http::{HeaderValue, Request};
+use axum::http::{HeaderMap, HeaderValue, Request};
 use axum::response::{IntoResponse, Response};
 use axum::{Extension, Form, Json};
 use pbkdf2::password_hash::rand_core::OsRng;
@@ -43,7 +43,7 @@ async fn generate_session_token(random: Arc<Mutex<ChaCha8Rng>>) -> String {
     u128::from_le_bytes(u128_pool).to_string()
 }
 
-fn extract_token(header: &HeaderValue) -> String {
+fn parse_token(header: &HeaderValue) -> String {
     header
         .to_str()
         .unwrap()
@@ -52,6 +52,14 @@ fn extract_token(header: &HeaderValue) -> String {
         .next()
         .unwrap()
         .to_string()
+}
+
+fn extract_token(headers: &HeaderMap) -> Result<String, ApiError> {
+    let token_option = headers.get(COOKIE);
+    token_option.map_or_else(
+        || Err(ApiError::MissingSessionTokenInClientRequest),
+        |unparsed_token| Ok(parse_token(unparsed_token)),
+    )
 }
 
 pub async fn sign_up(
@@ -89,7 +97,6 @@ pub async fn sign_in(
         .await?;
 
     let cookie_value = format!("session_token={}; Max-Age=3600", session_token);
-
     let mut response = Json(user).into_response();
     response.headers_mut().insert(
         header::SET_COOKIE,
@@ -97,14 +104,6 @@ pub async fn sign_in(
     );
 
     Ok(response)
-}
-
-pub async fn logout(
-    Extension(session): Extension<CurrentUser>,
-    State(state): State<Arc<SharedState>>,
-) -> Result<(), ApiError> {
-    state.database.delete_session(session.get_user_id()).await?;
-    Ok(())
 }
 
 pub async fn auto_login(
@@ -116,21 +115,23 @@ pub async fn auto_login(
     ))
 }
 
+
+pub async fn logout(
+    headers: HeaderMap,
+    State(state): State<Arc<SharedState>>,
+) -> Result<(), ApiError> {
+    let token = extract_token(&headers)?;
+    state.database.delete_session(&token).await?;
+    Ok(())
+}
+
 pub async fn check_session_token<T>(
     State(state): State<Arc<SharedState>>,
     mut request: Request<T>,
     next: axum::middleware::Next<T>,
 ) -> Result<Response, ApiError> {
-    let token_option = request.headers().get(COOKIE);
-    let token = match token_option {
-        None => return Err(ApiError::MissingSessionTokenInClientRequest),
-        Some(token) => extract_token(token),
-    };
-
+    let token = extract_token(&request.headers())?;
     let user_session = state.database.get_session(&token).await?;
-    request
-        .extensions_mut()
-        .insert(CurrentUser(user_session.id));
-
+    request.extensions_mut().insert(CurrentUser(user_session));
     Ok(next.run(request).await)
 }

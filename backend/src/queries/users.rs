@@ -37,20 +37,12 @@ impl Db {
             .filter(users::Column::Email.eq(email))
             .one(&self.pg_con)
             .await?;
-
-        match user {
-            Some(user) => Ok(user),
-            None => Err(DbError::EmptyQuery),
-        }
+        user.ok_or(DbError::EmptyQuery)
     }
 
     pub async fn get_user_by_id(&self, user_id: i64) -> Result<users::Model, DbError> {
         let user: Option<users::Model> =
             users::Entity::find_by_id(user_id).one(&self.pg_con).await?;
-
-        match user {
-            Some(user) => Ok(user),
-            None => Err(DbError::EmptyQuery),
-        }
+        user.ok_or(DbError::EmptyQuery)
     }
 }

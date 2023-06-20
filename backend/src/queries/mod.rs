@@ -3,7 +3,7 @@ pub mod sessions;
 pub mod users;
 
 use redis::aio::ConnectionManager;
-use redis::Client;
+use redis::{Client, RedisError};
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use thiserror::Error;
 use tracing::log;
@@ -42,10 +42,12 @@ impl Db {
 pub enum DbError {
     #[error("Tried to insert a value into database that is supposed to be unique")]
     UniqueConstraintViolation,
-    #[error("Unhandled database error: {0}")]
-    Database(#[from] sea_orm::error::DbErr),
+    #[error("Unhandled PG database error: {0}")]
+    PGDatabase(#[from] sea_orm::error::DbErr),
     #[error("Empty query.")]
     EmptyQuery,
     #[error("Missing session token.")]
     MissingSessionToken,
+    #[error("Unhandled Redis database error: {0}")]
+    RedisDatabase(#[from] RedisError),
 }

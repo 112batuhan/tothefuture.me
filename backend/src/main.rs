@@ -38,11 +38,11 @@ async fn main() {
         .route("/auto_login", get(auto_login))
         .route("/get_emails", get(get_emails))
         .route("/create_email", post(create_email))
-        .route("/logout", delete(logout))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
             check_session_token,
         ))
+        .route("/logout", delete(logout))
         .route("/sign_up", post(sign_up))
         .route("/sign_in", post(sign_in))
         .layer(cors)
