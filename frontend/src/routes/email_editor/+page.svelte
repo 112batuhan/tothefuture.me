@@ -44,7 +44,7 @@
 	});
 </script>
 
-<AceEditor
+<AceEditor class
 	on:selectionChange={(obj) => console.log(obj.detail)}
 	on:paste={(obj) => console.log(obj.detail)}
 	on:input={(obj) => console.log(obj.detail)}
@@ -64,12 +64,8 @@
 	bind:value={text}
 />
 
-<svelte:component this={AceEditor} />
-
 <button on:click={format}> Click me </button>
 
-<div>Preview</div>
 
-<div class="html_viewer">{@html text}</div>
+<iframe title="preview" srcdoc={text} />
 
-<h1>ayyy</h1>

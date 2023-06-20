@@ -1,12 +1,15 @@
 <script>
-	import { goto } from '$app/navigation';
-
 	// @ts-nocheck
+	import { goto } from '$app/navigation';
+	import Switch from './Switch.svelte';
+	
 
 	//this is forced for this page. rework later.
 	let is_html = true;
 	let email_body = '';
 	let send_date = '';
+
+	let switchValue;
 
 	async function insert_email() {
 		const res = await fetch('http://127.0.0.1:3040/create_email', {
@@ -23,6 +26,11 @@
 	}
 </script>
 
+<Switch bind:value={switchValue} label="Enable dark mode" design="inner" />
+<p>
+	Switch is {switchValue}
+</p>
+
 <textarea class="email_input" bind:value={email_body} />
 
 <div>
@@ -37,7 +45,7 @@
 
 <style>
 	.email_input {
-		height: 600px;
-		width: 600px;
+		height: 300px;
+		width: 300px;
 	}
 </style>
