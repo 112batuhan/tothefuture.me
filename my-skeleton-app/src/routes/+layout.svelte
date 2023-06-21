@@ -17,6 +17,7 @@
 				<strong class="text-xl uppercase flex-none mr-10">timecapsule-rs</strong>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
+				<a class="btn btn-sm variant-ghost-surface" href="/emails"> Email List </a>
 				<a class="btn btn-sm variant-ghost-surface" href="/sign_up"> Sign Up </a>
 				<a class="btn btn-sm variant-ghost-surface" href="/login"> Login </a>
 			</svelte:fragment>
