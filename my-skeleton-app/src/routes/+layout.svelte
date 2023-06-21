@@ -24,5 +24,5 @@
 	</svelte:fragment>
 
 	<!-- Page Route Content -->
-	<div class="container p-10 mx-auto"><slot /></div>
+	<div class="container p-10 mx-auto flex flex-col items-center"><slot /></div>
 </AppShell>
