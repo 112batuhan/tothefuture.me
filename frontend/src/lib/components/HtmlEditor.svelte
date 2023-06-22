@@ -49,12 +49,12 @@
 			<button on:click={format} class="card variant-ghost-surface p-2 mr-5">Beautify</button>
 		</div>
 		<div class="mt-3">
-			<AceEditor width="100%" height="600px" lang="html" theme="monokai" bind:value={text} />
+			<AceEditor width="100%" height="550px" lang="html" theme="monokai" bind:value={text} />
 		</div>
 	</div>
 	<div class="card variant-soft-surface w-full sm:w-1/2 p-4">
 		<div class="text-xl p-2 ml-5 mb-3"><strong>preview</strong></div>
-		<div style="width: 100%; height: 600px; overflow: hidden;">
+		<div style="width: 100%; height: 550px; overflow: hidden;">
 			<iframe
 				style="max-width: 100%; max-height: 100%; width: 100%; height: 100%;"
 				title="preview"
