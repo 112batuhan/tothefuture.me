@@ -53,7 +53,7 @@
 		</div>
 	</div>
 	<div class="card variant-soft-surface w-full sm:w-1/2 p-4">
-		<div class="text-xl p-2 ml-5 mb-3"><strong>preview</strong></div>
+		<div class="text-xl p-2 ml-5 mb-3 flex justify-start"><strong>Preview</strong></div>
 		<div style="width: 100%; height: 550px; overflow: hidden;">
 			<iframe
 				style="max-width: 100%; max-height: 100%; width: 100%; height: 100%;"

@@ -4,6 +4,7 @@
 
 	import { afterNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
+	import MdEditor from '$lib/components/MdEditor.svelte';
 
 	afterNavigate(async ({ from }) => {
 		// Run only on first login.
@@ -23,4 +24,4 @@
 	});
 </script>
 
-landing page
+<MdEditor />
