@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { Stepper, Step } from '@skeletonlabs/skeleton';
 	import { SlideToggle } from '@skeletonlabs/skeleton';
+	import HtmlEditor from '$lib/components/HtmlEditor.svelte';
 
 	let is_html: boolean = false;
-
 </script>
 
 <div class="card p-4 w-[100%] min-w-[300px]">
@@ -38,14 +38,11 @@
 				</div>
 			</div>
 		</Step>
-        <Step>
+		<Step>
 			<svelte:fragment slot="header">
 				<div class="text-center">Edit the mail!</div>
 			</svelte:fragment>
-			<div class="text-center">
-				placeholder editor
-			</div>
-
+			<div class="text-center"><HtmlEditor /></div>
 		</Step>
 		<!-- ... -->
 	</Stepper>
