@@ -6,15 +6,19 @@
 	// Most of your app wide CSS should be put in this file
 	import '../app.postcss';
 	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
-
 	import { goto } from '$app/navigation';
+	import { logged_in } from '$lib/stores/login_state';
+	import { onMount } from 'svelte';
 
 	async function logout() {
 		const res = await fetch('http://127.0.0.1:3040/logout', {
 			method: 'DELETE',
 			credentials: 'include'
 		});
-		goto('/');
+		if (res.ok || res.status === 401) {
+			$logged_in = false;
+			goto('/');
+		}
 	}
 </script>
 
@@ -27,10 +31,13 @@
 				<strong class="text-xl uppercase flex-none mr-10">timecapsule-rs</strong>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
-				<a class="btn btn-sm variant-ghost-surface" href="/emails" target="_self"> Email List </a>
-				<a class="btn btn-sm variant-ghost-surface" href="/sign_up" target="_self"> Sign Up </a>
-				<a class="btn btn-sm variant-ghost-surface" href="/login" target="_self"> Login </a>
-				<button on:click={logout} class="btn btn-sm variant-ghost-surface"> logout</button>
+				{#if $logged_in}
+					<a class="btn btn-sm variant-ghost-surface" href="/emails" target="_self"> Email List </a>
+					<button on:click={logout} class="btn btn-sm variant-ghost-surface"> logout</button>
+				{:else}
+					<a class="btn btn-sm variant-ghost-surface" href="/sign_up" target="_self"> Sign Up </a>
+					<a class="btn btn-sm variant-ghost-surface" href="/login" target="_self"> Login </a>
+				{/if}
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>

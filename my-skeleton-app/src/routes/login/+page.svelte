@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { logged_in } from '$lib/stores/login_state';
 
 	let email = '';
 	let password = '';
@@ -14,6 +15,7 @@
 			}
 		});
 		if (res.ok) {
+			$logged_in = true;
 			goto('/emails');
 		}
 	}
