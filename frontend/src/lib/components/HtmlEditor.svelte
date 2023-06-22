@@ -7,9 +7,8 @@
 	import { html } from 'js-beautify';
 	import { onMount } from 'svelte';
 
-	let text = `
+	export let text = `
               <head>
-                <title>Short HTML with Styling</title>
                 <style>
                   body {
                     font-family: Arial, sans-serif;
@@ -50,29 +49,11 @@
 			<button on:click={format} class="card variant-ghost-surface p-2 mr-5">Beautify</button>
 		</div>
 		<div class="mt-3">
-			<AceEditor
-				on:selectionChange={(obj) => console.log(obj.detail)}
-				on:paste={(obj) => console.log(obj.detail)}
-				on:input={(obj) => console.log(obj.detail)}
-				on:focus={() => console.log('focus')}
-				on:documentChange={(obj) => console.log(`document change : ${obj.detail}`)}
-				on:cut={() => console.log('cut')}
-				on:cursorChange={() => console.log('cursor change')}
-				on:copy={() => console.log('copy')}
-				on:init={(editor) => console.log(editor.detail)}
-				on:commandKey={(obj) => console.log(obj.detail)}
-				on:changeMode={(obj) => console.log(`change mode : ${obj.detail}`)}
-				on:blur={() => console.log('blur')}
-				width="100%"
-				height="600px"
-				lang="html"
-				theme="monokai"
-				bind:value={text}
-			/>
+			<AceEditor width="100%" height="600px" lang="html" theme="monokai" bind:value={text} />
 		</div>
 	</div>
 	<div class="card variant-soft-surface w-full sm:w-1/2 p-4">
-		<div class="text-xl p-2 ml-5 mb-3"><strong>Editor</strong></div>
+		<div class="text-xl p-2 ml-5 mb-3"><strong>preview</strong></div>
 		<div style="width: 100%; height: 600px; overflow: hidden;">
 			<iframe
 				style="max-width: 100%; max-height: 100%; width: 100%; height: 100%;"
