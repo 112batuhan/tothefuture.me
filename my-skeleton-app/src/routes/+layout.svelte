@@ -20,6 +20,10 @@
 			goto('/');
 		}
 	}
+
+	function homepage() {
+		goto('/');
+	}
 </script>
 
 <!-- App Shell -->
@@ -28,7 +32,9 @@
 		<!-- App Bar -->
 		<AppBar>
 			<svelte:fragment slot="lead">
-				<strong class="text-xl uppercase flex-none mr-10">timecapsule-rs</strong>
+				<button on:click={homepage}>
+					<strong class="text-xl uppercase flex-none mr-10">timecapsule-rs</strong>
+				</button>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
 				{#if $logged_in}
