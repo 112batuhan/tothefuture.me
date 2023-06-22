@@ -47,7 +47,7 @@ pub enum DbError {
     #[error("Empty query.")]
     EmptyQuery,
     #[error("Missing session token.")]
-    MissingSessionToken,
+    MissingSessionTokenInDatabase,
     #[error("Unhandled Redis database error: {0}")]
     RedisDatabase(#[from] RedisError),
 }

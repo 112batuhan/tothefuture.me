@@ -6,6 +6,18 @@
 	// Most of your app wide CSS should be put in this file
 	import '../app.postcss';
 	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
+
+	import { goto } from '$app/navigation';
+
+	async function logout() {
+		const res = await fetch('http://127.0.0.1:3040/logout', {
+			method: 'DELETE',
+			credentials: 'include'
+		});
+		if (res.ok) {
+			goto('/');
+		}
+	}
 </script>
 
 <!-- App Shell -->
@@ -17,9 +29,10 @@
 				<strong class="text-xl uppercase flex-none mr-10">timecapsule-rs</strong>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
-				<a class="btn btn-sm variant-ghost-surface" href="/emails"> Email List </a>
-				<a class="btn btn-sm variant-ghost-surface" href="/sign_up"> Sign Up </a>
-				<a class="btn btn-sm variant-ghost-surface" href="/login"> Login </a>
+				<a class="btn btn-sm variant-ghost-surface" href="/emails" target="_self"> Email List </a>
+				<a class="btn btn-sm variant-ghost-surface" href="/sign_up" target="_self"> Sign Up </a>
+				<a class="btn btn-sm variant-ghost-surface" href="/login" target="_self"> Login </a>
+				<button on:click={logout} class="btn btn-sm variant-ghost-surface"> logout</button>
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>

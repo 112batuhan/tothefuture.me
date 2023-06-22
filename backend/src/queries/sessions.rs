@@ -18,14 +18,19 @@ impl Db {
             .query_async(&mut self.redis_con.clone())
             .await?;
 
-        session.ok_or(DbError::MissingSessionToken)
+        session.ok_or(DbError::MissingSessionTokenInDatabase)
     }
 
     pub async fn delete_session(&self, token: &str) -> Result<(), DbError> {
-        redis::cmd("DEL")
+        let deletion_result: u8 = redis::cmd("DEL")
             .arg(token)
             .query_async(&mut self.redis_con.clone())
             .await?;
-        Ok(())
+        dbg!(&deletion_result);
+        if deletion_result == 0 {
+            Err(DbError::MissingSessionTokenInDatabase)
+        } else {
+            Ok(())
+        }
     }
 }

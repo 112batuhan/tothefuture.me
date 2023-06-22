@@ -4,8 +4,9 @@ pub mod queries;
 pub mod resend;
 
 use std::net::SocketAddr;
+use std::time::Duration;
 
-use api::authentication::{auto_login, check_session_token, logout, sign_in, sign_up};
+use api::authentication::{auto_login, check_session_token, login, logout, sign_up};
 use api::emails::{create_email, get_emails, send_demo_email};
 use api::SharedState;
 use axum::http::{header, Method};
@@ -31,7 +32,8 @@ async fn main() {
         .allow_methods([Method::GET, Method::POST, Method::DELETE, Method::OPTIONS])
         .allow_headers([header::COOKIE, header::ALLOW, header::CONTENT_TYPE])
         .allow_origin(origins)
-        .allow_credentials(true);
+        .allow_credentials(true)
+        .max_age(Duration::from_secs(3600));
 
     let app = Router::new()
         .route("/send_email/:email_id", get(send_demo_email))
@@ -44,7 +46,7 @@ async fn main() {
         ))
         .route("/logout", delete(logout))
         .route("/sign_up", post(sign_up))
-        .route("/sign_in", post(sign_in))
+        .route("/login", post(login))
         .layer(cors)
         .with_state(state);
 

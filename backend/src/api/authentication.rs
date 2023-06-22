@@ -4,7 +4,7 @@ use axum::extract::State;
 use axum::http::header::{self, COOKIE};
 use axum::http::{HeaderMap, HeaderValue, Request};
 use axum::response::{IntoResponse, Response};
-use axum::{Extension, Form, Json};
+use axum::{Extension, Json};
 use pbkdf2::password_hash::rand_core::OsRng;
 use pbkdf2::password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString};
 use pbkdf2::Pbkdf2;
@@ -64,7 +64,7 @@ fn extract_token(headers: &HeaderMap) -> Result<String, ApiError> {
 
 pub async fn sign_up(
     State(state): State<Arc<SharedState>>,
-    Form(body): Form<RequestUserBody>,
+    Json(body): Json<RequestUserBody>,
 ) -> Result<(), ApiError> {
     let hashed_password = hash_password(&body.password)?;
 
@@ -76,9 +76,9 @@ pub async fn sign_up(
     Ok(())
 }
 
-pub async fn sign_in(
+pub async fn login(
     State(state): State<Arc<SharedState>>,
-    Form(body): Form<RequestUserBody>,
+    Json(body): Json<RequestUserBody>,
 ) -> Result<Response, ApiError> {
     let user = state.database.get_user_by_email(&body.email).await?;
     let parsed_hash = PasswordHash::new(&user.password).unwrap();
@@ -114,7 +114,6 @@ pub async fn auto_login(
         state.database.get_user_by_id(session.get_user_id()).await?,
     ))
 }
-
 
 pub async fn logout(
     headers: HeaderMap,

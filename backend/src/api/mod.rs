@@ -96,7 +96,7 @@ impl ApiError {
                 DbError::UniqueConstraintViolation => StatusCode::CONFLICT,
                 DbError::PGDatabase(_) => StatusCode::INTERNAL_SERVER_ERROR,
                 DbError::EmptyQuery => StatusCode::NOT_FOUND,
-                DbError::MissingSessionToken => StatusCode::UNAUTHORIZED,
+                DbError::MissingSessionTokenInDatabase => StatusCode::UNAUTHORIZED,
                 DbError::RedisDatabase(_) => StatusCode::INTERNAL_SERVER_ERROR,
             },
             ApiError::MissingSessionTokenInClientRequest => StatusCode::UNAUTHORIZED,
@@ -117,7 +117,7 @@ impl ApiError {
                 DbError::UniqueConstraintViolation => "existing_user".to_string(),
                 DbError::PGDatabase(_) => "unhandled_pg_database_error".to_string(),
                 DbError::EmptyQuery => "empty_query_result".to_string(),
-                DbError::MissingSessionToken => "missing_token_in_server".to_string(),
+                DbError::MissingSessionTokenInDatabase => "missing_token_in_server".to_string(),
                 DbError::RedisDatabase(_) => "unhandled_redis_database_error".to_string(),
             },
             ApiError::MissingSessionTokenInClientRequest => {
