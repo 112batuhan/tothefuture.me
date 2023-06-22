@@ -8,6 +8,7 @@
 	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
 	import { goto } from '$app/navigation';
 	import { logged_in, user_email } from '$lib/stores/login_state';
+	import { page } from '$app/stores';
 
 	async function logout() {
 		const res = await fetch('http://127.0.0.1:3040/logout', {
@@ -19,6 +20,15 @@
 			goto('/');
 		}
 	}
+
+	let logged_in_hrefs = [
+		{ link: '/create_email', text: 'Create Email' },
+		{ link: '/emails', text: 'Emails' }
+	];
+	let logged_out_hrefs = [
+		{ link: '/sign_up', text: 'Sign Up' },
+		{ link: '/login', text: 'Login' }
+	];
 </script>
 
 <!-- App Shell -->
@@ -33,25 +43,27 @@
 			</svelte:fragment>
 
 			{#if $logged_in}
-				<div class="card p-4 variant-soft-surface">{$user_email}</div>
+				<div class="card p-2 variant-soft-surface">&#9993;&#65039; {$user_email}</div>
 			{/if}
 
 			<svelte:fragment slot="trail">
 				{#if $logged_in}
-					<button on:click={() => goto('/create_email')} class="btn btn-sm variant-ghost-surface">
-						Create Email
-					</button>
-					<button on:click={() => goto('/emails')} class="btn btn-sm variant-ghost-surface">
-						Email List
-					</button>
+					{#each logged_in_hrefs as href}
+						{#if $page.route.id != href.link}
+							<button on:click={() => goto(href.link)} class="btn btn-sm variant-ghost-surface">
+								{href.text}
+							</button>
+						{/if}
+					{/each}
 					<button on:click={logout} class="btn btn-sm variant-ghost-surface"> Logout</button>
 				{:else}
-					<button on:click={() => goto('/sign_up')} class="btn btn-sm variant-ghost-surface">
-						Sign Up
-					</button>
-					<button on:click={() => goto('/login')} class="btn btn-sm variant-ghost-surface">
-						Login
-					</button>
+					{#each logged_out_hrefs as href}
+						{#if $page.route.id != href.link}
+							<button on:click={() => goto(href.link)} class="btn btn-sm variant-ghost-surface">
+								{href.text}
+							</button>
+						{/if}
+					{/each}
 				{/if}
 			</svelte:fragment>
 		</AppBar>
