@@ -14,9 +14,7 @@
 			method: 'DELETE',
 			credentials: 'include'
 		});
-		if (res.ok) {
-			goto('/');
-		}
+		goto('/');
 	}
 </script>
 
