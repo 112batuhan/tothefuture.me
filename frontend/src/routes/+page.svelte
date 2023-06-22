@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { logged_in } from '$lib/stores/login_state';
 	import { goto } from '$app/navigation';
 
