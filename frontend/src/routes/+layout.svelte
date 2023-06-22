@@ -7,8 +7,7 @@
 	import '../app.postcss';
 	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
 	import { goto } from '$app/navigation';
-	import { logged_in } from '$lib/stores/login_state';
-	import { onMount } from 'svelte';
+	import { logged_in, user_email } from '$lib/stores/login_state';
 
 	async function logout() {
 		const res = await fetch('http://127.0.0.1:3040/logout', {
@@ -20,34 +19,46 @@
 			goto('/');
 		}
 	}
-
-	function homepage() {
-		goto('/');
-	}
 </script>
 
 <!-- App Shell -->
 <AppShell>
 	<svelte:fragment slot="header">
 		<!-- App Bar -->
-		<AppBar>
+		<AppBar gridColumns="grid-cols-3" slotDefault="place-self-center" slotTrail="place-content-end">
 			<svelte:fragment slot="lead">
-				<button on:click={homepage}>
+				<button on:click={() => goto('/')}>
 					<strong class="text-xl uppercase flex-none mr-10">timecapsule-rs</strong>
 				</button>
 			</svelte:fragment>
+
+			{#if $logged_in}
+				<div class="card p-4 variant-soft-surface">{$user_email}</div>
+			{/if}
+
 			<svelte:fragment slot="trail">
 				{#if $logged_in}
-					<a class="btn btn-sm variant-ghost-surface" href="/emails" target="_self"> Email List </a>
-					<button on:click={logout} class="btn btn-sm variant-ghost-surface"> logout</button>
+					<button on:click={() => goto('/create_email')} class="btn btn-sm variant-ghost-surface">
+						Create Email
+					</button>
+					<button on:click={() => goto('/emails')} class="btn btn-sm variant-ghost-surface">
+						Email List
+					</button>
+					<button on:click={logout} class="btn btn-sm variant-ghost-surface"> Logout</button>
 				{:else}
-					<a class="btn btn-sm variant-ghost-surface" href="/sign_up" target="_self"> Sign Up </a>
-					<a class="btn btn-sm variant-ghost-surface" href="/login" target="_self"> Login </a>
+					<button on:click={() => goto('/sign_up')} class="btn btn-sm variant-ghost-surface">
+						Sign Up
+					</button>
+					<button on:click={() => goto('/login')} class="btn btn-sm variant-ghost-surface">
+						Login
+					</button>
 				{/if}
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
 
 	<!-- Page Route Content -->
-	<div class="container p-10 mx-auto flex flex-col items-center"><slot /></div>
+	<div class="container p-10 mx-auto flex flex-col items-center">
+		<slot />
+	</div>
 </AppShell>

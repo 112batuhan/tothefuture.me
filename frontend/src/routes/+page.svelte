@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { logged_in } from '$lib/stores/login_state';
+	import { logged_in, user_email } from '$lib/stores/login_state';
 	import { goto } from '$app/navigation';
 
 	import { afterNavigate } from '$app/navigation';
@@ -15,6 +15,8 @@
 			});
 			if (res.ok) {
 				$logged_in = true;
+				let response_json = await res.json();
+				$user_email = response_json.email;
 				goto('/emails');
 			}
 		}
