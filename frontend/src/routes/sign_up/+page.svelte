@@ -1,82 +1,57 @@
-<script>
-	// @ts-nocheck
-
+<script lang="ts">
 	import { goto } from '$app/navigation';
 
 	let email = '';
 	let password = '';
-	let password2nd = '';
-	/**
-	 * @type {string | null}
-	 */
-	let result = null;
 
-	async function doPost(e) {
-		const data = new FormData(e.target);
-		const formData = new URLSearchParams();
-
-		for (var [key, value] of data.entries()) {
-			formData.append(key, value);
-		}
-		const res = await fetch(e.target.action, {
+	async function sign_up() {
+		const res = await fetch('http://127.0.0.1:3040/sign_up', {
 			method: 'POST',
+			credentials: 'include',
+			body: JSON.stringify({ email: email, password: password }),
 			headers: {
-				Accept: ' application/x-www-form-urlencoded',
-				'Content-Type': ' application/x-www-form-urlencoded'
-			},
-			body: formData.toString()
+				'Content-Type': 'application/json'
+			}
 		});
 		if (res.ok) {
-			goto('/sign_in');
+			goto('/login');
 		}
 	}
 </script>
 
-<form action="http://127.0.0.1:3040/sign_up" method="post" on:submit|preventDefault={doPost}>
-	<div class="container">
-		<div class="form_field">
-			<label for="email"> Email </label>
-			<input bind:value={email} name="email" id="email" />
-		</div>
-		<div class="form_field">
-			<label for="password"> Password </label>
-			<input bind:value={password} name="password" id="password" />
-		</div>
-		<div class="form_field">
-			<label for="second_password"> Confirm password </label>
-			<input bind:value={password2nd} id="second_password" />
-		</div>
-
-		<div class="submit_button">
-			{#if password != password2nd}
-				Passwords doesn't match
-			{:else}
-				<input type="submit" value="sign_up" />
-			{/if}
-		</div>
+<div class="card p-4 min-w-min">
+	<header class="card-header text-center max-w-sm">
+		Sign up with the e-mail adress you want to receive your mail in the future!
+	</header>
+	<label class="label my-3">
+		<span class="pl-2">Email:</span>
+		<input
+			bind:value={email}
+			class="input rounded-full"
+			type="email"
+			placeholder="your.email@adress.com"
+		/>
+	</label>
+	<label class="label my-3">
+		<span class="pl-2">Password:</span>
+		<input
+			bind:value={password}
+			class="input rounded-full"
+			type="password"
+			placeholder="Enter Password Here"
+		/>
+	</label>
+	<label class="label my-3">
+		<span class="pl-2">Enter Password Again:</span>
+		<input class="input rounded-full" type="password" placeholder="Enter Password Here" />
+	</label>
+	<div class="mt-6 flex flex-col items-center">
+		<button
+			on:click={sign_up}
+			type="button"
+			class="btn variant-ghost-surface rounded-full min-w-min"
+		>
+			Sign Up!
+		</button>
 	</div>
-</form>
-<p>Result:</p>
-<pre>
-{result}
-</pre>
-
-<style>
-	.container {
-		border: 0.1rem solid;
-		border-color: rgb(0, 0, 0);
-		border-radius: 1rem;
-		width: fit-content;
-	}
-	.form_field {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		padding-inline: 1rem;
-	}
-	.submit_button{
-		margin-top: 0.5rem;
-		text-align: center;
-		margin-bottom: 0.5rem;
-	}
-</style>
+</div>
