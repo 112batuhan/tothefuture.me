@@ -54,6 +54,7 @@
 				<AccordionItem
 					on:toggle={() => (active_item = email.display_id)}
 					class="variant-ghost-surface rounded-md"
+					open={active_item == email.display_id}
 				>
 					<svelte:fragment slot="lead">&#9993;&#65039;</svelte:fragment>
 					<svelte:fragment slot="summary">
