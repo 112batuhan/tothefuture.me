@@ -39,10 +39,34 @@
               </body>
               
               `;
+
+	async function create_email() {
+		try {
+			const res = await fetch('http://127.0.0.1:3040/create_email', {
+				method: 'POST',
+				credentials: 'include',
+				body: JSON.stringify({
+					is_html: is_html,
+					subject: subject,
+					date: date,
+					body: is_html ? body_html : body_text
+				}),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+
+			if (res.ok) {
+				goto('/emails');
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	}
 </script>
 
 <div class="card p-4 w-[100%] min-w-[300px]">
-	<Stepper>
+	<Stepper on:complete={create_email}>
 		<Step>
 			<svelte:fragment slot="header">
 				<div class="text-center">Welcome to the mail builder!</div>
