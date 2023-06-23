@@ -9,9 +9,10 @@
 	import { goto } from '$app/navigation';
 	import { logged_in, user_email } from '$lib/stores/login_state';
 	import { page } from '$app/stores';
+	import { PUBLIC_BACKEND_URL } from '$env/static/public';
 
 	async function logout() {
-		const res = await fetch('http://127.0.0.1:3040/logout', {
+		const res = await fetch(PUBLIC_BACKEND_URL + '/logout', {
 			method: 'DELETE',
 			credentials: 'include'
 		});

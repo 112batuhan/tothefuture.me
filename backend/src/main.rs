@@ -26,7 +26,7 @@ async fn main() {
         .await
         .expect("Failed to initiate Shared State");
 
-    let origins = ["http://localhost:5173".parse().unwrap()];
+    let origins = [std::env::var("FRONTEND_URL").unwrap().parse().unwrap()];
 
     let cors = CorsLayer::new()
         .allow_methods([Method::GET, Method::POST, Method::DELETE, Method::OPTIONS])
@@ -50,7 +50,10 @@ async fn main() {
         .layer(cors)
         .with_state(state);
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3040));
+    let addr = SocketAddr::from((
+        [127, 0, 0, 1],
+        std::env::var("PORT").unwrap().parse::<u16>().unwrap(),
+    ));
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await

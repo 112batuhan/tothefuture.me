@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { PUBLIC_BACKEND_URL } from '$env/static/public';
 	import { Accordion, AccordionItem, Paginator } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
 
@@ -6,7 +7,7 @@
 
 	onMount(async () => {
 		try {
-			const res = await fetch('http://127.0.0.1:3040/get_emails', {
+			const res = await fetch(PUBLIC_BACKEND_URL + '/get_emails', {
 				method: 'GET',
 				credentials: 'include'
 			});

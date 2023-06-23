@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { PUBLIC_BACKEND_URL } from '$env/static/public';
 
 	let email = '';
 	let password = '';
 
 	async function sign_up() {
-		const res = await fetch('http://127.0.0.1:3040/sign_up', {
+		const res = await fetch(PUBLIC_BACKEND_URL + '/sign_up', {
 			method: 'POST',
 			credentials: 'include',
 			body: JSON.stringify({ email: email, password: password }),

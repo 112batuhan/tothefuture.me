@@ -3,6 +3,7 @@
 	import { SlideToggle } from '@skeletonlabs/skeleton';
 	import HtmlEditor from '$lib/components/HtmlEditor.svelte';
 	import { goto } from '$app/navigation';
+	import { PUBLIC_BACKEND_URL } from '$env/static/public';
 
 	let date_step_lock = false;
 
@@ -42,7 +43,7 @@
 
 	async function create_email() {
 		try {
-			const res = await fetch('http://127.0.0.1:3040/create_email', {
+			const res = await fetch(PUBLIC_BACKEND_URL + '/create_email', {
 				method: 'POST',
 				credentials: 'include',
 				body: JSON.stringify({

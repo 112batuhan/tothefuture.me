@@ -1,6 +1,7 @@
 .env
 backend/target
 backend/migration/target
+backend/.env
 frontend.DS_Store
 frontend/node_modules
 frontend//build
