@@ -7,31 +7,7 @@
 	import { html } from 'js-beautify';
 	import { onMount } from 'svelte';
 
-	export let text = `
-              <head>
-                <style>
-                  body {
-                    font-family: Arial, sans-serif;
-                    background-color: #f2f2f2;
-                  }
-
-                  h1 {
-                    color: #333;
-                    text-align: center;
-                  }
-
-                  p {
-                    color: #666;
-                    text-align: center;
-                  }
-                </style>
-              </head>
-              <body>
-                <h1>Hello, World!</h1>
-                <p>This is a short HTML document with some styling.</p>
-              </body>
-              
-              `;
+	export let text = "";
 
 	function format() {
 		text = html(text, { preserve_newlines: true, wrap_line_length: 80 });
@@ -42,8 +18,8 @@
 	});
 </script>
 
-<div class="flex flex-col gap-4 sm:flex-row">
-	<div class="card variant-soft-surface p-4 w-full sm:w-1/2">
+<div class="flex flex-col gap-4 lg:flex-row">
+	<div class="card variant-soft-surface p-4 w-full lg:w-1/2">
 		<div class="flex justify-between">
 			<div class="text-xl p-2 ml-5"><strong>Editor</strong></div>
 			<button on:click={format} class="card variant-ghost-surface p-2 mr-5">Beautify</button>
@@ -52,7 +28,7 @@
 			<AceEditor width="100%" height="550px" lang="html" theme="monokai" bind:value={text} />
 		</div>
 	</div>
-	<div class="card variant-soft-surface w-full sm:w-1/2 p-4">
+	<div class="card variant-soft-surface w-full lg:w-1/2 p-4">
 		<div class="text-xl p-2 ml-5 mb-3 flex justify-start"><strong>Preview</strong></div>
 		<div style="width: 100%; height: 550px; overflow: hidden;">
 			<iframe
