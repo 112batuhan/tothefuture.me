@@ -4,7 +4,8 @@ ARG PORT
 FROM node:latest as builder
 WORKDIR /app
 COPY . .
-RUN npm i vite
+ENV PUBLIC_BACKEND_URL=$PUBLIC_BACKEND_URL
+
 RUN npm run build
 
 

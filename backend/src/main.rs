@@ -55,6 +55,8 @@ async fn main() {
         [127, 0, 0, 1],
         std::env::var("PORT").unwrap().parse::<u16>().unwrap(),
     ));
+
+    println!("Started serving on:{}", addr);
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await
