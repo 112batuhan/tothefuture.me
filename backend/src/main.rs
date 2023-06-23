@@ -12,11 +12,12 @@ use api::SharedState;
 use axum::http::{header, Method};
 use axum::routing::{delete, get, post};
 use axum::{middleware, Router};
+use dotenv::dotenv;
 use tower_http::cors::CorsLayer;
 
 #[tokio::main]
 async fn main() {
-    dotenv::dotenv().expect("Unable to load environment variables from .env file");
+    dotenv().ok();
 
     tracing_subscriber::fmt()
         .with_max_level(tracing::Level::DEBUG)

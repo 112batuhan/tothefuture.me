@@ -1,3 +1,10 @@
+ARG DATABASE_URL
+ARG FRONTEND_URL
+ARG REDIS_URL
+ARG RESEND_API_TOKEN
+ARG RESEND_EMAIL_ADRESS
+ARG PORT
+
 FROM rust:latest AS builder
 COPY . .
 RUN rm -rf ./migration
@@ -6,6 +13,12 @@ RUN cargo build --release
 FROM debian:bullseye-slim
 COPY --from=builder ./target/release/backend ./target/release/backend
 ENV PORT 3040
+ARG DATABASE_URL=$DATABASE_URL
+ARG FRONTEND_URL=$FRONTEND_URL
+ARG REDIS_URL=$REDIS_URL
+ARG RESEND_API_TOKEN=$RESEND_API_TOKEN
+ARG RESEND_EMAIL_ADRESS=$RESEND_EMAIL_ADRESS
 EXPOSE $PORT
+
 
 CMD ["/target/release/backend"]
