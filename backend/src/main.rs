@@ -52,7 +52,7 @@ async fn main() {
         .with_state(state);
 
     let addr = SocketAddr::from((
-        [127, 0, 0, 1],
+        [0, 0, 0, 0],
         std::env::var("PORT").unwrap().parse::<u16>().unwrap(),
     ));
 
