@@ -1,7 +1,7 @@
 ARG PUBLIC_BACKEND_URL
 ARG PORT
 
-FROM node:latest as builder
+FROM node:alpine as builder
 WORKDIR /app
 COPY . .
 RUN npm run build
