@@ -2,9 +2,10 @@ use std::sync::Arc;
 
 use axum::extract::State;
 use axum::http::header::{self, COOKIE};
-use axum::http::{HeaderMap, HeaderValue, Request};
+use axum::http::{HeaderMap, Request};
 use axum::response::{IntoResponse, Response};
 use axum::{Extension, Json};
+use itertools::Itertools;
 use pbkdf2::password_hash::rand_core::OsRng;
 use pbkdf2::password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString};
 use pbkdf2::Pbkdf2;
@@ -43,22 +44,34 @@ async fn generate_session_token(random: Arc<Mutex<ChaCha8Rng>>) -> String {
     u128::from_le_bytes(u128_pool).to_string()
 }
 
-fn parse_token(header: &HeaderValue) -> String {
-    header
-        .to_str()
-        .unwrap()
-        .split("=")
-        .skip(1)
+fn get_cookie_with_key(cookies: &str, cookie_key: &str) -> Result<String, ApiError> {
+    let (_, cookie_value) = cookies
+        .split(";")
+        .map(|cookie_pair| {
+            cookie_pair
+                .trim()
+                .split("=")
+                .collect_tuple::<(&str, &str)>()
+                .ok_or(ApiError::MissingSessionTokenInClientRequest)
+        })
+        .filter(|result| result.as_ref().is_ok_and(|(key, _)| *key == cookie_key))
         .next()
-        .unwrap()
-        .to_string()
+        .ok_or(ApiError::MissingSessionTokenInClientRequest)??;
+
+    Ok(cookie_value.to_string())
 }
 
 fn extract_token(headers: &HeaderMap) -> Result<String, ApiError> {
-    let token_option = headers.get(COOKIE);
-    token_option.map_or_else(
+    let cookie_option = headers.get(COOKIE);
+    cookie_option.map_or_else(
         || Err(ApiError::MissingSessionTokenInClientRequest),
-        |unparsed_token| Ok(parse_token(unparsed_token)),
+        |unparsed_cookies| {
+            let cookie_string = unparsed_cookies.to_str().unwrap();
+            Ok(get_cookie_with_key(
+                cookie_string,
+                "timecapsule_session_token",
+            )?)
+        },
     )
 }
 
@@ -93,10 +106,13 @@ pub async fn login(
     let session_token = generate_session_token(state.random.clone()).await;
     state
         .database
-        .upsert_session(user.id, session_token.clone())
+        .insert_session(user.id, &session_token)
         .await?;
 
-    let cookie_value = format!("session_token={}; Max-Age=3600", session_token);
+    let cookie_value = format!(
+        "timecapsule_session_token={}; Max-Age=3600; SameSite=Strict",
+        session_token
+    );
     let mut response = Json(user).into_response();
     response.headers_mut().insert(
         header::SET_COOKIE,

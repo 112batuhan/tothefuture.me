@@ -1,9 +1,10 @@
-use super::{Db, DbError};
+use super::{Db, DbError, RedisType};
 
 impl Db {
-    pub async fn upsert_session(&self, user_id: i64, token: String) -> Result<(), DbError> {
-        redis::cmd("SET")
-            .arg(token)
+    pub async fn insert_session(&self, user_id: i64, token: &str) -> Result<(), DbError> {
+        redis::pipe()
+            .cmd("SET")
+            .arg(RedisType::SessionToken(token).to_string())
             .arg(user_id)
             .arg("EX")
             .arg(3600) // 1 hour
@@ -14,7 +15,7 @@ impl Db {
 
     pub async fn get_session(&self, token: &str) -> Result<i64, DbError> {
         let session: Option<i64> = redis::cmd("GET")
-            .arg(token)
+            .arg(RedisType::SessionToken(token).to_string())
             .query_async(&mut self.redis_con.clone())
             .await?;
 
@@ -22,15 +23,12 @@ impl Db {
     }
 
     pub async fn delete_session(&self, token: &str) -> Result<(), DbError> {
-        let deletion_result: u8 = redis::cmd("DEL")
-            .arg(token)
+        let id: Option<i64> = redis::cmd("GETDEL")
+            .arg(RedisType::SessionToken(token).to_string())
             .query_async(&mut self.redis_con.clone())
             .await?;
-        dbg!(&deletion_result);
-        if deletion_result == 0 {
-            Err(DbError::MissingSessionTokenInDatabase)
-        } else {
-            Ok(())
-        }
+
+        id.ok_or_else(|| DbError::MissingSessionTokenInDatabase)?;
+        Ok(())
     }
 }
