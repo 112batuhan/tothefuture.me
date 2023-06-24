@@ -10,6 +10,7 @@
 	import { logged_in, user_email } from '$lib/stores/login_state';
 	import { page } from '$app/stores';
 	import { PUBLIC_BACKEND_URL } from '$env/static/public';
+	import { onMount } from 'svelte';
 
 	async function logout() {
 		const res = await fetch(PUBLIC_BACKEND_URL + '/logout', {
@@ -30,6 +31,25 @@
 		{ link: '/sign_up', text: 'Sign Up' },
 		{ link: '/login', text: 'Login' }
 	];
+
+	onMount(async () => {
+		// Run only on first login.
+
+		if (!$logged_in) {
+			let res = await fetch(PUBLIC_BACKEND_URL + '/auto_login', {
+				method: 'GET',
+				credentials: 'include'
+			});
+			if (res.ok) {
+				$logged_in = true;
+				let response_json = await res.json();
+				$user_email = response_json.email;
+				goto('/emails');
+			} else {
+				goto('/');
+			}
+		}
+	});
 </script>
 
 <!-- App Shell -->
