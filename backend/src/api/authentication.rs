@@ -16,6 +16,7 @@ use tokio::sync::Mutex;
 
 use super::{ApiError, CurrentUser, SharedState};
 use crate::entities::users;
+use crate::queries::DbError;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct RequestUserBody {
@@ -103,6 +104,15 @@ pub async fn login(
         };
     };
 
+    let session_check = state.database.get_session_with_id(user.id).await;
+    match session_check {
+        Err(DbError::MissingSessionTokenInDatabase) => {}
+        Err(rest) => return Err(ApiError::from(rest)),
+        Ok(token) => {
+            state.database.delete_session(&token).await?;
+        }
+    }
+
     let session_token = generate_session_token(state.random.clone()).await;
     state
         .database
@@ -146,7 +156,7 @@ pub async fn check_session_token<T>(
     next: axum::middleware::Next<T>,
 ) -> Result<Response, ApiError> {
     let token = extract_token(&request.headers())?;
-    let user_session = state.database.get_session(&token).await?;
+    let user_session = state.database.get_session_with_token(&token).await?;
     request.extensions_mut().insert(CurrentUser(user_session));
     Ok(next.run(request).await)
 }

@@ -15,6 +15,7 @@ const UNIQUE_KEY_VIOLATION_CODE: &str = "23505";
 pub enum RedisType<'a> {
     SessionToken(&'a str),
     EmailCooldown(&'a str),
+    SessionID(i64),
 }
 
 impl<'a> RedisType<'a> {
@@ -22,6 +23,7 @@ impl<'a> RedisType<'a> {
         match self {
             RedisType::SessionToken(key) => format!("{}:{}", "SESSION_TOKEN", key),
             RedisType::EmailCooldown(key) => format!("{}:{}", "EMAIL_COOLDOWN", key),
+            RedisType::SessionID(key) => format!("{}:{}", "SESSION_ID", key),
         }
     }
 }
