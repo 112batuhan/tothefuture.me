@@ -1,8 +1,11 @@
 use super::{Db, DbError, RedisType};
 
 impl Db {
-
-    // The reason that we insert the token both ways is to check the token with id as key to confirm if the user alrady has a login in the server. Without this, one user
+    // The reason that we insert the token both ways is to check the token with id as key to confirm
+    // if the user alrady has a login in the server. Without this, one user can create infinite
+    // sessions with login endpoint. This is solved by checking tokens with id as key, deleting the
+    // key if it exist, and creating a new one.
+    // Check login handler in api module for the implementation.
     pub async fn insert_session(&self, user_id: i64, token: &str) -> Result<(), DbError> {
         redis::pipe()
             .cmd("SET")
@@ -40,7 +43,7 @@ impl Db {
         session.ok_or(DbError::MissingSessionTokenInDatabase)
     }
 
-    // This function may cause inconsistend data as I wanted to have token keys and id keys to be
+    // This function may cause inconsistent data as I wanted to have token keys and id keys to be
     // in sync. But async transactions and using connection manager in transactions is not possible
     // with the library. But in the end, the entries have a limited life so they should expire
     // on their own to fix this issue.
@@ -52,10 +55,15 @@ impl Db {
 
         let id = id.ok_or_else(|| DbError::MissingSessionTokenInDatabase)?;
 
-        redis::cmd("DEL")
+        let delete_count: u8 = redis::cmd("DEL")
             .arg(RedisType::SessionID(id).to_string())
             .query_async(&mut self.redis_con.clone())
             .await?;
-        Ok(())
+
+        if delete_count == 0 {
+            Err(DbError::MissingSessionTokenInDatabase)
+        } else {
+            Ok(())
+        }
     }
 }
