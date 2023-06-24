@@ -10,7 +10,22 @@ use tracing::log;
 
 const UNIQUE_KEY_VIOLATION_CODE: &str = "23505";
 
-#[derive(Clone)]
+// This could implement RedisWrite and ToRedisArgs traits
+// but no need to complicate and overdo things
+pub enum RedisType<'a> {
+    SessionToken(&'a str),
+    EmailCooldown(&'a str),
+}
+
+impl<'a> RedisType<'a> {
+    fn to_string(self) -> String {
+        match self {
+            RedisType::SessionToken(key) => format!("{}:{}", "SESSION_TOKEN", key),
+            RedisType::EmailCooldown(key) => format!("{}:{}", "EMAIL_COOLDOWN", key),
+        }
+    }
+}
+
 pub struct Db {
     pg_con: DatabaseConnection,
     redis_con: ConnectionManager,
