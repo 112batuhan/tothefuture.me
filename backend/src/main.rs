@@ -44,7 +44,7 @@ async fn main() {
 
     let governor_conf = Box::new(
         GovernorConfigBuilder::default()
-            .per_second(20)
+            .per_second(1)
             .burst_size(5)
             .key_extractor(SmartIpKeyExtractor)
             .use_headers()
@@ -76,7 +76,7 @@ async fn main() {
         )
         .layer(cors)
         .with_state(state);
-
+        
     let addr = SocketAddr::from((
         [0, 0, 0, 0],
         std::env::var("PORT").unwrap().parse::<u16>().unwrap(),

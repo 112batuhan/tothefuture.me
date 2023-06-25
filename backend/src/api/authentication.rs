@@ -1,7 +1,6 @@
-use std::net::SocketAddr;
 use std::sync::Arc;
 
-use axum::extract::{ConnectInfo, State};
+use axum::extract::State;
 use axum::http::header::{self, COOKIE};
 use axum::http::{HeaderMap, Request};
 use axum::response::{IntoResponse, Response};
@@ -119,6 +118,10 @@ pub async fn login(
         .insert_session(user.id, &session_token)
         .await?;
 
+    // TODO: Fix local SameSite=Strict issue
+    // Probably move it in a env variable to seperate prod and dev
+    // Definately do that, or make your local host https
+    // I don't want to do that, looks like too much work :C
     let cookie_value = format!(
         "{}={}; Max-Age=3600; SameSite=Strict",
         SESSION_TOKEN_KEY, session_token,
@@ -151,14 +154,10 @@ pub async fn logout(
 }
 
 pub async fn check_session_token<T>(
-    headers: HeaderMap,
-    ConnectInfo(addr): ConnectInfo<SocketAddr>,
     State(state): State<Arc<SharedState>>,
     mut request: Request<T>,
     next: axum::middleware::Next<T>,
 ) -> Result<Response, ApiError> {
-    println!("{:?}", headers);
-    println!("{}", addr);
     let token = extract_token(&request.headers())?;
     let user_session = state.database.get_session_with_token(&token).await?;
     request.extensions_mut().insert(CurrentUser(user_session));
