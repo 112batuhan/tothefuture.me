@@ -151,11 +151,13 @@ pub async fn logout(
 }
 
 pub async fn check_session_token<T>(
+    headers: HeaderMap,
     ConnectInfo(addr): ConnectInfo<SocketAddr>,
     State(state): State<Arc<SharedState>>,
     mut request: Request<T>,
     next: axum::middleware::Next<T>,
 ) -> Result<Response, ApiError> {
+    println!("{:?}", headers);
     println!("{}", addr);
     let token = extract_token(&request.headers())?;
     let user_session = state.database.get_session_with_token(&token).await?;
