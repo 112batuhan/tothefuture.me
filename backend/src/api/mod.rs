@@ -95,7 +95,7 @@ impl ApiError {
             ApiError::Database(database_error) => match database_error {
                 DbError::UniqueConstraintViolation => StatusCode::CONFLICT,
                 DbError::PGDatabase(_) => StatusCode::INTERNAL_SERVER_ERROR,
-                DbError::EmptyQuery => StatusCode::NO_CONTENT,
+                DbError::EmptyQuery => StatusCode::NOT_FOUND,
                 DbError::MissingSessionTokenInDatabase => StatusCode::UNAUTHORIZED,
                 DbError::RedisDatabase(_) => StatusCode::INTERNAL_SERVER_ERROR,
             },
