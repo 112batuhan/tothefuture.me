@@ -20,7 +20,7 @@ async fn main() {
     dotenv().ok();
 
     tracing_subscriber::fmt()
-        .with_max_level(tracing::Level::DEBUG)
+        .with_max_level(tracing::Level::INFO)
         .init();
 
     let state = SharedState::new()
