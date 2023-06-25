@@ -1,6 +1,7 @@
+use std::net::SocketAddr;
 use std::sync::Arc;
 
-use axum::extract::State;
+use axum::extract::{ConnectInfo, State};
 use axum::http::header::{self, COOKIE};
 use axum::http::{HeaderMap, Request};
 use axum::response::{IntoResponse, Response};
@@ -17,6 +18,8 @@ use tokio::sync::Mutex;
 use super::{ApiError, CurrentUser, SharedState};
 use crate::entities::users;
 use crate::queries::DbError;
+
+const SESSION_TOKEN_KEY: &'static str = "timecapsule_session_token";
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct RequestUserBody {
@@ -68,10 +71,7 @@ fn extract_token(headers: &HeaderMap) -> Result<String, ApiError> {
         || Err(ApiError::MissingSessionTokenInClientRequest),
         |unparsed_cookies| {
             let cookie_string = unparsed_cookies.to_str().unwrap();
-            Ok(get_cookie_with_key(
-                cookie_string,
-                "timecapsule_session_token",
-            )?)
+            Ok(get_cookie_with_key(cookie_string, SESSION_TOKEN_KEY)?)
         },
     )
 }
@@ -120,8 +120,8 @@ pub async fn login(
         .await?;
 
     let cookie_value = format!(
-        "timecapsule_session_token={}; Max-Age=3600; SameSite=Strict",
-        session_token
+        "{}={}; Max-Age=3600; SameSite=Strict",
+        SESSION_TOKEN_KEY, session_token,
     );
     let mut response = Json(user).into_response();
     response.headers_mut().insert(
@@ -151,10 +151,12 @@ pub async fn logout(
 }
 
 pub async fn check_session_token<T>(
+    ConnectInfo(addr): ConnectInfo<SocketAddr>,
     State(state): State<Arc<SharedState>>,
     mut request: Request<T>,
     next: axum::middleware::Next<T>,
 ) -> Result<Response, ApiError> {
+    println!("{}", addr);
     let token = extract_token(&request.headers())?;
     let user_session = state.database.get_session_with_token(&token).await?;
     request.extensions_mut().insert(CurrentUser(user_session));
