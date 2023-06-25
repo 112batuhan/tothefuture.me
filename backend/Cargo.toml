@@ -38,3 +38,5 @@ redis = { version = "0.23.0", features = [
     "tokio-comp",
 ] }
 itertools = "0.11.0"
+tower_governor = "0.0.4"
+tower = "0.4.13"
