@@ -3,7 +3,7 @@
 only blazing fast 🚀🚀🚀🚀🚀🚀🚀
 
 TODO:
-- [ ] Rate limit (Might be a problem on Railway because of proxy)
+- [x] Rate limit
 - [ ] Plaintext editor
 - [ ] MD editor
 - [ ] Mail sending coroutine
