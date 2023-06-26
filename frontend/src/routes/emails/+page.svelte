@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { PUBLIC_BACKEND_URL } from '$env/static/public';
+	import { logged_in } from '$lib/stores/login_state';
 	import { Accordion, AccordionItem, Paginator } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
 
@@ -20,6 +22,9 @@
 				emails.forEach((item: any, i: number) => {
 					item.display_id = i;
 				});
+			} else if (res.status == 401) {
+				$logged_in = false;
+				goto('/');
 			} else {
 				emails = [];
 			}

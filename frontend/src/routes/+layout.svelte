@@ -45,6 +45,7 @@
 				$user_email = response_json.email;
 				goto('/emails');
 			} else {
+				$logged_in = true;
 				goto('/');
 			}
 		}
