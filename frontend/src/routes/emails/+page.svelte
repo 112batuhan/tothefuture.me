@@ -12,7 +12,7 @@
 				credentials: 'include'
 			});
 
-			if (res.ok) {
+			if (res.status == 200) {
 				emails = await res.json();
 				// Paginator email length update
 				page.size = emails.length;

@@ -57,7 +57,7 @@
 				}
 			});
 
-			if (res.ok) {
+			if (res.status == 201) {
 				goto('/emails');
 			}
 		} catch (error) {

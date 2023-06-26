@@ -6,11 +6,10 @@
 	// Most of your app wide CSS should be put in this file
 	import '../app.postcss';
 	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
-	import { goto } from '$app/navigation';
+	import { afterNavigate, goto } from '$app/navigation';
 	import { logged_in, user_email } from '$lib/stores/login_state';
 	import { page } from '$app/stores';
 	import { PUBLIC_BACKEND_URL } from '$env/static/public';
-	import { onMount } from 'svelte';
 
 	async function logout() {
 		const res = await fetch(PUBLIC_BACKEND_URL + '/logout', {
@@ -32,15 +31,15 @@
 		{ link: '/login', text: 'Login' }
 	];
 
-	onMount(async () => {
+	afterNavigate(async ({ from }) => {
 		// Run only on first login.
-
-		if (!$logged_in) {
+		// Can be simplified because in first login from returns undefined but this is more safe
+		if (from?.url.origin != $page.url.origin && !logged_in) {
 			let res = await fetch(PUBLIC_BACKEND_URL + '/auto_login', {
 				method: 'GET',
 				credentials: 'include'
 			});
-			if (res.ok) {
+			if (res.status == 201) {
 				$logged_in = true;
 				let response_json = await res.json();
 				$user_email = response_json.email;
