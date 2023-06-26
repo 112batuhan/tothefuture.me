@@ -11,11 +11,11 @@ use pbkdf2::password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, Salt
 use pbkdf2::Pbkdf2;
 use rand_chacha::ChaCha8Rng;
 use rand_core::RngCore;
+use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 use tokio::sync::Mutex;
 
 use super::{ApiError, CurrentUser, SharedState};
-use crate::entities::users;
 use crate::queries::DbError;
 
 const SESSION_TOKEN_KEY: &'static str = "timecapsule_session_token";
@@ -78,7 +78,7 @@ fn extract_token(headers: &HeaderMap) -> Result<String, ApiError> {
 pub async fn sign_up(
     State(state): State<Arc<SharedState>>,
     Json(body): Json<RequestUserBody>,
-) -> Result<(), ApiError> {
+) -> Result<StatusCode, ApiError> {
     let hashed_password = hash_password(&body.password)?;
 
     state
@@ -86,7 +86,7 @@ pub async fn sign_up(
         .create_user(body.email, hashed_password)
         .await?;
 
-    Ok(())
+    Ok(StatusCode::CREATED)
 }
 
 pub async fn login(
@@ -131,6 +131,7 @@ pub async fn login(
         header::SET_COOKIE,
         header::HeaderValue::from_str(&cookie_value).unwrap(),
     );
+    *response.status_mut() = StatusCode::CREATED;
 
     Ok(response)
 }
@@ -138,10 +139,11 @@ pub async fn login(
 pub async fn auto_login(
     Extension(session): Extension<CurrentUser>,
     State(state): State<Arc<SharedState>>,
-) -> Result<Json<users::Model>, ApiError> {
-    Ok(Json(
-        state.database.get_user_by_id(session.get_user_id()).await?,
-    ))
+) -> Result<Response, ApiError> {
+    let mut response =
+        Json(state.database.get_user_by_id(session.get_user_id()).await?).into_response();
+    *response.status_mut() = StatusCode::CREATED;
+    Ok(response)
 }
 
 pub async fn logout(

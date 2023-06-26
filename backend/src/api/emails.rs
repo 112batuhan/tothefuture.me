@@ -3,6 +3,7 @@ use std::sync::Arc;
 
 use axum::extract::{Path, State};
 use axum::{Extension, Json};
+use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 
 use super::{ApiError, CurrentUser, SharedState};
@@ -20,7 +21,7 @@ pub async fn create_email(
     Extension(session): Extension<CurrentUser>,
     State(state): State<Arc<SharedState>>,
     Json(request_body): Json<RequestEmailBody>,
-) -> Result<(), ApiError> {
+) -> Result<StatusCode, ApiError> {
     let send_date = chrono::NaiveDate::from_str(&request_body.date)?;
 
     state
@@ -34,7 +35,7 @@ pub async fn create_email(
         )
         .await?;
 
-    Ok(())
+    Ok(StatusCode::CREATED)
 }
 
 pub async fn get_emails(
