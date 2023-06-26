@@ -4,6 +4,7 @@
 	import HtmlEditor from '$lib/components/HtmlEditor.svelte';
 	import { goto } from '$app/navigation';
 	import { PUBLIC_BACKEND_URL } from '$env/static/public';
+	import { logged_in } from '$lib/stores/login_state';
 
 	let date_step_lock = false;
 
@@ -57,8 +58,11 @@
 				}
 			});
 
-			if (res.ok) {
+			if (res.status == 201) {
 				goto('/emails');
+			} else if (res.status == 401) {
+				$logged_in = false;
+				goto('/');
 			}
 		} catch (error) {
 			console.error(error);

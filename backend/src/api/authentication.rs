@@ -6,19 +6,26 @@ use axum::http::{HeaderMap, Request};
 use axum::response::{IntoResponse, Response};
 use axum::{Extension, Json};
 use itertools::Itertools;
+use lazy_static::lazy_static;
 use pbkdf2::password_hash::rand_core::OsRng;
 use pbkdf2::password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString};
 use pbkdf2::Pbkdf2;
 use rand_chacha::ChaCha8Rng;
 use rand_core::RngCore;
+use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 use tokio::sync::Mutex;
 
 use super::{ApiError, CurrentUser, SharedState};
-use crate::entities::users;
 use crate::queries::DbError;
 
 const SESSION_TOKEN_KEY: &'static str = "timecapsule_session_token";
+// Set the value to the "SameSite=strict" in servers, set to empty string in local.
+// Don't forget to set it in prod environment :)
+lazy_static! {
+    static ref COOKIE_SAME_SITE_STRING: String =
+        std::env::var("RESEND_EMAIL_ADDRESS").unwrap_or("".to_string());
+}
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct RequestUserBody {
@@ -78,7 +85,7 @@ fn extract_token(headers: &HeaderMap) -> Result<String, ApiError> {
 pub async fn sign_up(
     State(state): State<Arc<SharedState>>,
     Json(body): Json<RequestUserBody>,
-) -> Result<(), ApiError> {
+) -> Result<StatusCode, ApiError> {
     let hashed_password = hash_password(&body.password)?;
 
     state
@@ -86,7 +93,7 @@ pub async fn sign_up(
         .create_user(body.email, hashed_password)
         .await?;
 
-    Ok(())
+    Ok(StatusCode::CREATED)
 }
 
 pub async fn login(
@@ -118,19 +125,16 @@ pub async fn login(
         .insert_session(user.id, &session_token)
         .await?;
 
-    // TODO: Fix local SameSite=Strict issue
-    // Probably move it in a env variable to seperate prod and dev
-    // Definately do that, or make your local host https
-    // I don't want to do that, looks like too much work :C
     let cookie_value = format!(
-        "{}={}; Max-Age=3600; SameSite=Strict",
-        SESSION_TOKEN_KEY, session_token,
+        "{}={}; Max-Age=3600; {}",
+        SESSION_TOKEN_KEY, session_token, *COOKIE_SAME_SITE_STRING
     );
     let mut response = Json(user).into_response();
     response.headers_mut().insert(
         header::SET_COOKIE,
         header::HeaderValue::from_str(&cookie_value).unwrap(),
     );
+    *response.status_mut() = StatusCode::CREATED;
 
     Ok(response)
 }
@@ -138,10 +142,11 @@ pub async fn login(
 pub async fn auto_login(
     Extension(session): Extension<CurrentUser>,
     State(state): State<Arc<SharedState>>,
-) -> Result<Json<users::Model>, ApiError> {
-    Ok(Json(
-        state.database.get_user_by_id(session.get_user_id()).await?,
-    ))
+) -> Result<Response, ApiError> {
+    let mut response =
+        Json(state.database.get_user_by_id(session.get_user_id()).await?).into_response();
+    *response.status_mut() = StatusCode::CREATED;
+    Ok(response)
 }
 
 pub async fn logout(

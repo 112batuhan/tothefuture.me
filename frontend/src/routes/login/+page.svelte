@@ -2,13 +2,12 @@
 	import { goto } from '$app/navigation';
 	import { PUBLIC_BACKEND_URL } from '$env/static/public';
 	import { logged_in, user_email } from '$lib/stores/login_state';
-	
 
 	let email = '';
 	let password = '';
 
 	async function login() {
-		const res = await fetch(PUBLIC_BACKEND_URL+'/login', {
+		const res = await fetch(PUBLIC_BACKEND_URL + '/login', {
 			method: 'POST',
 			credentials: 'include',
 			body: JSON.stringify({ email: email, password: password }),
@@ -16,7 +15,7 @@
 				'Content-Type': 'application/json'
 			}
 		});
-		if (res.ok) {
+		if (res.status == 201) {
 			$logged_in = true;
 			let response_json = await res.json();
 			$user_email = response_json.email;
