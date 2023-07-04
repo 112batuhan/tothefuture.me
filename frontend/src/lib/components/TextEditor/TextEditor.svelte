@@ -2,17 +2,12 @@
 	//@ts-nocheck
 	import './styles.scss';
 
-	import StarterKit from '@tiptap/starter-kit';
-	import Paragraph from '@tiptap/extension-paragraph';
-	import Bold from '@tiptap/extension-bold';
-	import Code from '@tiptap/extension-code';
-	import Italic from '@tiptap/extension-italic';
-	import Strike from '@tiptap/extension-strike';
-	import HardBreak from '@tiptap/extension-hard-break';
+	import StarterKit from '@tiptap/starter-kit'; // maybe debloat at one point
 	import TextStyle from '@tiptap/extension-text-style';
 	import FontFamily from '@tiptap/extension-font-family';
 	import FontSize from 'tiptap-extension-font-size';
 	import Image from '@tiptap/extension-image';
+	import Underline from '@tiptap/extension-underline';
 	import { Color } from '@tiptap/extension-color';
 	import { Editor } from '@tiptap/core';
 	import { onMount } from 'svelte';
@@ -53,44 +48,7 @@
 	onMount(() => {
 		editor = new Editor({
 			element: element,
-			extensions: [
-				StarterKit,
-				TextStyle,
-				FontSize,
-				Color,
-				Image,
-				FontFamily,
-				Paragraph.configure({
-					HTMLAttributes: {
-						class: 'custom_paragraph'
-					}
-				}),
-				Bold.configure({
-					HTMLAttributes: {
-						class: 'custom_bold'
-					}
-				}),
-				Code.configure({
-					HTMLAttributes: {
-						class: 'custom_code'
-					}
-				}),
-				Strike.configure({
-					HTMLAttributes: {
-						class: 'custom_strike'
-					}
-				}),
-				Italic.configure({
-					HTMLAttributes: {
-						class: 'custom_italic'
-					}
-				}),
-				HardBreak.configure({
-					HTMLAttributes: {
-						class: 'custom_hard_break'
-					}
-				})
-			],
+			extensions: [StarterKit, TextStyle, FontSize, Color, Image, FontFamily, Underline],
 			content: content,
 			onTransaction: () => {
 				// force re-render so `editor.isActive` works as expected
@@ -98,13 +56,6 @@
 			}
 		});
 	});
-
-	function addImage() {
-		const url = window.prompt('URL');
-		if (url) {
-			editor.chain().focus().setImage({ src: url }).run();
-		}
-	}
 </script>
 
 {#if editor}
@@ -191,17 +142,28 @@
 				on:click={() => editor.chain().focus().setFontSize('20px').run()}
 				class={editor.isActive('textStyle', { fontSize: '20px' }) ? 'is-active' : ''}
 			>
-				redo
+				resize
 			</button>
 			<input
 				type="color"
 				on:input={(e) => editor.chain().focus().setColor(e.target.value).run()}
 				class={editor.isActive('textStyle').color ? 'is-active' : ''}
 			/>
-			<button on:click={addImage}> setImage </button>
+			<button
+				on:click={() => {
+					{
+						const url = window.prompt('URL');
+						if (url) {
+							editor.chain().focus().setImage({ src: url }).run();
+						}
+					}
+				}}
+			>
+				setImage
+			</button>
 			<button
 				on:click={() => editor.chain().focus().setFontFamily('Comic Sans MS, Comic Sans').run()}
-				:class={editor.isActive('textStyle', { fontFamily: 'Comic Sans MS, Comic Sans' })}
+				class={editor.isActive('textStyle', { fontFamily: 'Comic Sans MS, Comic Sans' })}
 			>
 				Comic Sans
 			</button>
@@ -210,6 +172,12 @@
 				class={editor.isActive('textStyle', { fontFamily: 'serif' })}
 			>
 				serif
+			</button>
+			<button
+				on:click={() => editor.chain().focus().toggleUnderline().run()}
+				class={editor.isActive('underline') ? 'is-active' : ''}
+			>
+				toggleUnderline
 			</button>
 		</div>
 	</div>

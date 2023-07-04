@@ -49,6 +49,7 @@
 		"@tiptap/extension-image": "^2.0.3",
 		"@tiptap/extension-paragraph": "^2.0.3",
 		"@tiptap/extension-text-style": "^2.0.3",
+		"@tiptap/extension-underline": "^2.0.3",
 		"@tiptap/pm": "^2.0.3",
 		"@tiptap/starter-kit": "^2.0.3",
 		"brace": "^0.11.1",
