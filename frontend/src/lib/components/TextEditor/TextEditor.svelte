@@ -1,6 +1,13 @@
 <script>
 	//@ts-nocheck
 	import './styles.scss';
+	import ItalicSVG from './editorIcons/italic.svg';
+	import BoldSVG from './editorIcons/bold.svg';
+	import StrikeSVG from './editorIcons/strikethrough.svg';
+	import CodeSVG from './editorIcons/code.svg';
+	//import BoldSVG from './editorIcons/bold.svg';
+	//import BoldSVG from './editorIcons/bold.svg';
+	//import BoldSVG from './editorIcons/bold.svg';
 
 	import StarterKit from '@tiptap/starter-kit'; // maybe debloat at one point
 	import TextStyle from '@tiptap/extension-text-style';
@@ -63,25 +70,25 @@
 	<div class="bg-slate-600">
 		<div>
 			<button
-				on:click={() => console.log && editor.chain().focus().toggleBold().run()}
+				on:click={() => editor.chain().focus().toggleBold().run()}
 				disabled={!editor.can().chain().focus().toggleBold().run()}
 				class={editor.isActive('bold') ? 'is-active' : ''}
 			>
-				bold
+				<BoldSVG class="w-3 h-3" />
 			</button>
 			<button
 				on:click={() => editor.chain().focus().toggleItalic().run()}
 				disabled={!editor.can().chain().focus().toggleItalic().run()}
 				class={editor.isActive('italic') ? 'is-active' : ''}
 			>
-				italic
+				<ItalicSVG class="w-3 h-3" />
 			</button>
 			<button
 				on:click={() => editor.chain().focus().toggleStrike().run()}
 				disabled={!editor.can().chain().focus().toggleStrike().run()}
 				class={editor.isActive('strike') ? 'is-active' : ''}
 			>
-				strike
+				<StrikeSVG class="w-3 h-3" />
 			</button>
 			<button
 				on:click={() => editor.chain().focus().toggleCode().run()}
@@ -116,12 +123,7 @@
 			>
 				code block
 			</button>
-			<button
-				on:click={() => editor.chain().focus().toggleBlockquote().run()}
-				class={editor.isActive('blockquote') ? 'is-active' : ''}
-			>
-				blockquote
-			</button>
+
 			<button on:click={() => editor.chain().focus().setHorizontalRule().run()}>
 				horizontal rule
 			</button>
