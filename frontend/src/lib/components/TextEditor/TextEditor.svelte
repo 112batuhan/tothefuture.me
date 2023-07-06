@@ -1,10 +1,9 @@
-<script>
-	//@ts-nocheck
+<script lang="ts">
 	import './styles.scss';
-	import ItalicSVG from './editorIcons/italic.svg';
-	import BoldSVG from './editorIcons/bold.svg';
-	import StrikeSVG from './editorIcons/strikethrough.svg';
-	import CodeSVG from './editorIcons/code.svg';
+	import ItalicSVG from './editorIcons/italic.svg?component';
+	import BoldSVG from './editorIcons/bold.svg?component';
+	import StrikeSVG from './editorIcons/strikethrough.svg?component';
+	import CodeSVG from './editorIcons/code.svg?component';
 	//import BoldSVG from './editorIcons/bold.svg';
 	//import BoldSVG from './editorIcons/bold.svg';
 	//import BoldSVG from './editorIcons/bold.svg';
@@ -19,8 +18,9 @@
 	import { Editor } from '@tiptap/core';
 	import { onMount } from 'svelte';
 
-	let element;
-	let editor;
+	let element: HTMLDivElement;
+
+	let editor: Editor;
 	let content = `
               <h2>
                 Hi there,
@@ -63,6 +63,15 @@
 			}
 		});
 	});
+
+	function setActiveClassAttr(active: boolean) {
+		return active ? 'bg-white text-black' : '';
+	}
+
+	function setColor(e: Event) {
+		let target = e.target as HTMLInputElement;
+		editor.chain().focus().setColor(target.value).run();
+	}
 </script>
 
 {#if editor}
@@ -72,7 +81,7 @@
 			<button
 				on:click={() => editor.chain().focus().toggleBold().run()}
 				disabled={!editor.can().chain().focus().toggleBold().run()}
-				class={editor.isActive('bold') ? 'is-active' : ''}
+				class={setActiveClassAttr(editor.isActive('bold'))}
 			>
 				<BoldSVG class="w-3 h-3" />
 			</button>
@@ -89,13 +98,6 @@
 				class={editor.isActive('strike') ? 'is-active' : ''}
 			>
 				<StrikeSVG class="w-3 h-3" />
-			</button>
-			<button
-				on:click={() => editor.chain().focus().toggleCode().run()}
-				disabled={!editor.can().chain().focus().toggleCode().run()}
-				class={editor.isActive('code') ? 'is-active' : ''}
-			>
-				code
 			</button>
 			<button on:click={() => editor.chain().focus().unsetAllMarks().run()}> clear marks </button>
 			<button
@@ -117,13 +119,6 @@
 			>
 				ordered list
 			</button>
-			<button
-				on:click={() => editor.chain().focus().toggleCodeBlock().run()}
-				class={editor.isActive('codeBlock') ? 'is-active' : ''}
-			>
-				code block
-			</button>
-
 			<button on:click={() => editor.chain().focus().setHorizontalRule().run()}>
 				horizontal rule
 			</button>
@@ -146,11 +141,7 @@
 			>
 				resize
 			</button>
-			<input
-				type="color"
-				on:input={(e) => editor.chain().focus().setColor(e.target.value).run()}
-				class={editor.isActive('textStyle').color ? 'is-active' : ''}
-			/>
+			<input type="color" on:input={setColor} value={editor.getAttributes('textStyle').color} />
 			<button
 				on:click={() => {
 					{
@@ -165,13 +156,15 @@
 			</button>
 			<button
 				on:click={() => editor.chain().focus().setFontFamily('Comic Sans MS, Comic Sans').run()}
-				class={editor.isActive('textStyle', { fontFamily: 'Comic Sans MS, Comic Sans' })}
+				class="{editor.isActive('textStyle', { fontFamily: 'Comic Sans MS, Comic Sans' })
+					? 'is-active'
+					: ''}}"
 			>
 				Comic Sans
 			</button>
 			<button
 				on:click={() => editor.chain().focus().setFontFamily('serif').run()}
-				class={editor.isActive('textStyle', { fontFamily: 'serif' })}
+				class={editor.isActive('textStyle', { fontFamily: 'serif' }) ? 'is-active' : ''}
 			>
 				serif
 			</button>
