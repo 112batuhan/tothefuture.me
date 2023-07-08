@@ -10,6 +10,10 @@
 	import { logged_in, user_email } from '$lib/stores/login_state';
 	import { page } from '$app/stores';
 	import { PUBLIC_BACKEND_URL } from '$env/static/public';
+	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
+
+	import { storePopup } from '@skeletonlabs/skeleton';
+	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
 	async function logout() {
 		const res = await fetch(PUBLIC_BACKEND_URL + '/logout', {

@@ -19,6 +19,7 @@
 	import { Color } from '@tiptap/extension-color';
 	import { Editor } from '@tiptap/core';
 	import { onMount } from 'svelte';
+	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
 
 	let element: HTMLDivElement;
 
@@ -63,6 +64,15 @@
 		let target = e.target as HTMLInputElement;
 		editor.chain().focus().setColor(target.value).run();
 	}
+
+	const popupFeatured: PopupSettings = {
+		// Represents the type of event that opens/closed the popup
+		event: 'click',
+		// Matches the data-popup value on your popup element
+		target: 'popupFeatured',
+		// Defines which side of your trigger the popup will appear
+		placement: 'bottom'
+	};
 </script>
 
 {#if editor}
@@ -146,6 +156,12 @@
 		>
 			<ClearFormattingSVG class={SVGStyle} />
 		</button>
+		<button use:popup={popupFeatured}>
+			<ClearFormattingSVG class={SVGStyle} />
+		</button>
 	</div>
 {/if}
 <div class="bg-[#c2a6f5] text-black w-full outline-none" bind:this={element} />
+
+<!-- Popup elements -->
+<div class="card p-4 w-72 shadow-xl" data-popup="popupFeatured">this is a test div</div>
