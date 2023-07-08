@@ -152,14 +152,14 @@
 				on:click={() => editor.chain().focus().redo().run()}
 				disabled={!editor.can().chain().focus().redo().run()}
 				class={pasiveClass}
-
 			>
 				<Redo class={SVGStyle} />
 			</button>
 		</div>
 		<button
-			on:click={() => editor.chain().focus().unsetAllMarks().run()}
-			disabled={!editor.can().chain().focus().unsetAllMarks().run()}
+			on:click={() => editor.chain().focus().unsetAllMarks().clearNodes().run()}
+			disabled={!editor.can().chain().focus().unsetAllMarks().clearNodes().run()}
+			class={pasiveClass}
 		>
 			<ClearFormattingSVG class={SVGStyle} />
 		</button>
