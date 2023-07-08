@@ -3,10 +3,14 @@
 	import ItalicSVG from './editorIcons/italic.svg?component';
 	import BoldSVG from './editorIcons/bold.svg?component';
 	import StrikeSVG from './editorIcons/strikethrough.svg?component';
-	import CodeSVG from './editorIcons/code.svg?component';
-	//import BoldSVG from './editorIcons/bold.svg';
-	//import BoldSVG from './editorIcons/bold.svg';
-	//import BoldSVG from './editorIcons/bold.svg';
+	import UnderlineIcon from './editorIcons/underline.svg?component';
+	import ClearFormattingSVG from './editorIcons/clear-formatting.svg?component';
+	import Undo from './editorIcons/undo.svg?component';
+	import Redo from './editorIcons/redo.svg?component';
+	import NumberList from './editorIcons/number-list.svg?component';
+	import BulletList from './editorIcons/bullet-list.svg?component';
+	import ColorIcon from './editorIcons/color.svg?component';
+	import Size from './editorIcons/size.svg?component';
 
 	import StarterKit from '@tiptap/starter-kit'; // maybe debloat at one point
 	import TextStyle from '@tiptap/extension-text-style';
@@ -65,7 +69,7 @@
 	});
 
 	function setActiveClassAttr(active: boolean) {
-		return active ? 'bg-white text-black' : '';
+		return active ? 'bg-white' : '';
 	}
 
 	function setColor(e: Event) {
@@ -77,71 +81,75 @@
 {#if editor}
 	{editor.getHTML()}
 	<div class="bg-slate-600">
-		<div>
+		<div class="flex gap-5">
 			<button
 				on:click={() => editor.chain().focus().toggleBold().run()}
 				disabled={!editor.can().chain().focus().toggleBold().run()}
 				class={setActiveClassAttr(editor.isActive('bold'))}
 			>
-				<BoldSVG class="w-3 h-3" />
+				<BoldSVG class="w-5 h-5" />
 			</button>
 			<button
 				on:click={() => editor.chain().focus().toggleItalic().run()}
 				disabled={!editor.can().chain().focus().toggleItalic().run()}
 				class={editor.isActive('italic') ? 'is-active' : ''}
 			>
-				<ItalicSVG class="w-3 h-3" />
+				<ItalicSVG class="w-5 h-5" />
 			</button>
 			<button
 				on:click={() => editor.chain().focus().toggleStrike().run()}
 				disabled={!editor.can().chain().focus().toggleStrike().run()}
 				class={editor.isActive('strike') ? 'is-active' : ''}
 			>
-				<StrikeSVG class="w-3 h-3" />
+				<StrikeSVG class="w-5 h-5" />
 			</button>
-			<button on:click={() => editor.chain().focus().unsetAllMarks().run()}> clear marks </button>
 			<button
-				on:click={() => editor.chain().focus().setParagraph().run()}
-				class={editor.isActive('paragraph') ? 'is-active' : ''}
+				on:click={() => editor.chain().focus().toggleUnderline().run()}
+				class={editor.isActive('underline') ? 'is-active' : ''}
 			>
-				paragraph
+				<UnderlineIcon class="w-5 h-5" />
 			</button>
+			<button on:click={() => editor.chain().focus().unsetAllMarks().run()}>
+				<ClearFormattingSVG class="w-5 h-5" /></button
+			>
 
 			<button
 				on:click={() => editor.chain().focus().toggleBulletList().run()}
 				class={editor.isActive('bulletList') ? 'is-active' : ''}
 			>
-				bullet list
+				<BulletList class="w-5 h-5" />
 			</button>
 			<button
 				on:click={() => editor.chain().focus().toggleOrderedList().run()}
 				class={editor.isActive('orderedList') ? 'is-active' : ''}
 			>
-				ordered list
+				<NumberList class="w-5 h-5" />
 			</button>
-			<button on:click={() => editor.chain().focus().setHorizontalRule().run()}>
-				horizontal rule
-			</button>
-			<button on:click={() => editor.chain().focus().setHardBreak().run()}> hard break </button>
+
 			<button
 				on:click={() => editor.chain().focus().undo().run()}
 				disabled={!editor.can().chain().focus().undo().run()}
 			>
-				undo
+				<Undo class="w-5 h-5" />
 			</button>
 			<button
 				on:click={() => editor.chain().focus().redo().run()}
 				disabled={!editor.can().chain().focus().redo().run()}
 			>
-				redo
+				<Redo class="w-5 h-5" />
 			</button>
 			<button
 				on:click={() => editor.chain().focus().setFontSize('20px').run()}
 				class={editor.isActive('textStyle', { fontSize: '20px' }) ? 'is-active' : ''}
 			>
-				resize
+				<Size class="w-5 h-5" />
 			</button>
-			<input type="color" on:input={setColor} value={editor.getAttributes('textStyle').color} />
+			<div class="flex content-center">
+				<input type="color" id="color-input" on:input={setColor} class="collapse h-0 w-0 p-0 m-0" />
+				<label for="color-input">
+					<ColorIcon class="w-5 h-5" />
+				</label>
+			</div>
 			<button
 				on:click={() => {
 					{
@@ -151,29 +159,7 @@
 						}
 					}
 				}}
-			>
-				setImage
-			</button>
-			<button
-				on:click={() => editor.chain().focus().setFontFamily('Comic Sans MS, Comic Sans').run()}
-				class="{editor.isActive('textStyle', { fontFamily: 'Comic Sans MS, Comic Sans' })
-					? 'is-active'
-					: ''}}"
-			>
-				Comic Sans
-			</button>
-			<button
-				on:click={() => editor.chain().focus().setFontFamily('serif').run()}
-				class={editor.isActive('textStyle', { fontFamily: 'serif' }) ? 'is-active' : ''}
-			>
-				serif
-			</button>
-			<button
-				on:click={() => editor.chain().focus().toggleUnderline().run()}
-				class={editor.isActive('underline') ? 'is-active' : ''}
-			>
-				toggleUnderline
-			</button>
+			/>
 		</div>
 	</div>
 {/if}
