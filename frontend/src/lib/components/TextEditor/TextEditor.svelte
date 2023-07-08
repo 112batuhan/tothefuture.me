@@ -117,15 +117,12 @@
 		</div>
 
 		<div class="card variant-soft-surface rounded-full flex justify-center gap-2">
-			<button
-				on:click={() => editor.chain().focus().setFontSize('20px').run()}
-				class={pasiveClass}
-			>
+			<button on:click={() => editor.chain().focus().setFontSize('20px').run()} class={pasiveClass}>
 				<SizeSVG class={SVGStyle} />
 			</button>
 			<div class="flex content-center">
 				<input type="color" id="color-input" on:input={setColor} class="collapse h-0 w-0 p-0 m-0" />
-				<label for="color-input">
+				<label for="color-input" class={pasiveClass}>
 					<ColorSVG class={SVGStyle} />
 				</label>
 			</div>
@@ -138,6 +135,7 @@
 						}
 					}
 				}}
+				class={pasiveClass}
 			>
 				<ImageSVG class={SVGStyle} />
 			</button>
@@ -146,12 +144,15 @@
 			<button
 				on:click={() => editor.chain().focus().undo().run()}
 				disabled={!editor.can().chain().focus().undo().run()}
+				class={pasiveClass}
 			>
 				<UndoSVG class={SVGStyle} />
 			</button>
 			<button
 				on:click={() => editor.chain().focus().redo().run()}
 				disabled={!editor.can().chain().focus().redo().run()}
+				class={pasiveClass}
+
 			>
 				<Redo class={SVGStyle} />
 			</button>
