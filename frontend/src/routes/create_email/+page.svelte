@@ -5,6 +5,7 @@
 	import { goto } from '$app/navigation';
 	import { PUBLIC_BACKEND_URL } from '$env/static/public';
 	import { logged_in } from '$lib/stores/login_state';
+	import TextEditor from '$lib/components/TextEditor/TextEditor.svelte';
 
 	let date_step_lock = false;
 
@@ -122,7 +123,11 @@
 			<svelte:fragment slot="header">
 				<div class="text-center">Edit the Email!</div>
 			</svelte:fragment>
-			<div class="text-center"><HtmlEditor bind:text={body_html} /></div>
+			{#if is_html}
+				<div class="text-center"><HtmlEditor bind:text={body_html} /></div>
+			{:else}
+				<TextEditor />
+			{/if}
 		</Step>
 		<!-- ... -->
 	</Stepper>

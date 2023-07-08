@@ -1,5 +1,4 @@
 <script lang="ts">
-
 	import ItalicSVG from './editorIcons/italic.svg?component';
 	import BoldSVG from './editorIcons/bold.svg?component';
 	import StrikeSVG from './editorIcons/strikethrough.svg?component';
@@ -12,7 +11,7 @@
 	import ColorSVG from './editorIcons/color.svg?component';
 	import SizeSVG from './editorIcons/size.svg?component';
 	import ImageSVG from './editorIcons/image.svg?component';
-	
+
 	import StarterKit from '@tiptap/starter-kit'; // maybe debloat at one point
 	import TextStyle from '@tiptap/extension-text-style';
 	import FontFamily from '@tiptap/extension-font-family';
@@ -26,36 +25,20 @@
 	let element: HTMLDivElement;
 
 	let editor: Editor;
-	let content = `
-              <h2>
-                Hi there,
-              </h2>
-              <p>
-                this is a <em>basic</em> example of <strong>tiptap</strong>. Sure, there are all kind of basic text styles you’d probably expect from a text editor. But wait until you see the lists:
-              </p>
-              <ul>
-                <li>
-                  That’s a bullet list with one …
-                </li>
-                <li>
-                  … or two list items.
-                </li>
-              </ul>
-              <p>
-                Isn’t that great? And all of that is editable. But wait, there’s more. Let’s try a code block:
-              </p>
-              <pre><code class="language-css">body {
-          display: none;
-        }</code></pre>
-              <p>
-                I know, I know, this is impressive. It’s only the tip of the iceberg though. Give it a try and click a little bit around. Don’t forget to check the other examples too.
-              </p>
-              <blockquote>
-                Wow, that’s amazing. Good work, boy! 👏
-                <br />
-                — Mom
-              </blockquote>
-            `;
+	let content = `<p>this is a test</p><p>this is a test for all things</p><p></p><p>a
+		lon<strong>g l inea l<u>ong l</u></strong><u>inea long</u><em><u> line</u>a l
+		ong line</em>a long lin&lt; s&gt;ea long lin<strong><s>ea l</s>ong linea <
+		u>lon</u></strong></p><p><strong><u>g li</u></strong><u>nea lon</u>g l
+		ine a lo<span style="font-size: 20px">ng linea long linea l</span>
+		ong li<span>nea long li</span>nea long linea long l</p><p>inea lon
+		g linea long linea long linea long linea long l inea long line
+		a long linea long line</p><p>a long linea long linea long line
+		a long linea long linea long linea long linea long linea lo
+		ng linea l</p><p>ong linea long linea long linea long linea
+		long linea long l inea long linea l</p><p>ong linea lon
+		g linea long linea long linea long linea long linea
+		long linea long l in</p><p>ea long linea long linea
+		long linea long linea long line</p><p></p><p></p>`;
 
 	onMount(() => {
 		editor = new Editor({
@@ -69,8 +52,13 @@
 		});
 	});
 
+	const SVGStyle = 'w-5 h-5 m-2';
+
+	const baseStyle = 'rounded-full fill-white stroke-white ';
+	const activeClass = baseStyle + 'variant-filled-primary';
+	const pasiveClass = baseStyle + 'variant-ghost-primary';
 	function setActiveClassAttr(active: boolean) {
-		return active ? 'bg-white' : '';
+		return active ? activeClass : pasiveClass;
 	}
 
 	function setColor(e: Event) {
@@ -82,63 +70,63 @@
 {#if editor}
 	{editor.getHTML()}
 
-	<div class="bg-slate-600 flex gap-7 p-3">
-		<div class="flex gap-2 items-center justify-center">
+	<div class="card variant-soft-surface flex gap-7 p-3 w-full">
+		<div class="card variant-soft-surface rounded-full flex gap-2 justify-center">
 			<button
 				on:click={() => editor.chain().focus().toggleBold().run()}
 				disabled={!editor.can().chain().focus().toggleBold().run()}
 				class={setActiveClassAttr(editor.isActive('bold'))}
 			>
-				<BoldSVG class="w-5 h-5" />
+				<BoldSVG class={SVGStyle} />
 			</button>
 			<button
 				on:click={() => editor.chain().focus().toggleItalic().run()}
 				disabled={!editor.can().chain().focus().toggleItalic().run()}
-				class={editor.isActive('italic') ? 'is-active' : ''}
+				class={setActiveClassAttr(editor.isActive('italic'))}
 			>
-				<ItalicSVG class="w-5 h-5" />
+				<ItalicSVG class={SVGStyle} />
 			</button>
 			<button
 				on:click={() => editor.chain().focus().toggleStrike().run()}
 				disabled={!editor.can().chain().focus().toggleStrike().run()}
-				class={editor.isActive('strike') ? 'is-active' : ''}
+				class={setActiveClassAttr(editor.isActive('strike'))}
 			>
-				<StrikeSVG class="w-5 h-5" />
+				<StrikeSVG class={SVGStyle} />
 			</button>
 			<button
 				on:click={() => editor.chain().focus().toggleUnderline().run()}
-				class={editor.isActive('underline') ? 'is-active' : ''}
+				class={setActiveClassAttr(editor.isActive('underline'))}
 			>
-				<UnderlineIcon class="w-5 h-5" />
+				<UnderlineIcon class={SVGStyle} />
 			</button>
 		</div>
 
-		<div class="flex gap-2 items-center justify-center">
+		<div class="card variant-soft-surface rounded-full flex gap-2 justify-center">
 			<button
 				on:click={() => editor.chain().focus().toggleBulletList().run()}
-				class={editor.isActive('bulletList') ? 'is-active' : ''}
+				class={setActiveClassAttr(editor.isActive('bulletList'))}
 			>
-				<BulletListSVG class="w-5 h-5" />
+				<BulletListSVG class={SVGStyle} />
 			</button>
 			<button
 				on:click={() => editor.chain().focus().toggleOrderedList().run()}
-				class={editor.isActive('orderedList') ? 'is-active' : ''}
+				class={setActiveClassAttr(editor.isActive('orderedList'))}
 			>
-				<NumberListSVG class="w-5 h-5" />
+				<NumberListSVG class={SVGStyle} />
 			</button>
 		</div>
 
-		<div class="flex justify-center gap-2">
+		<div class="card variant-soft-surface rounded-full flex justify-center gap-2">
 			<button
 				on:click={() => editor.chain().focus().setFontSize('20px').run()}
-				class={editor.isActive('textStyle', { fontSize: '20px' }) ? 'is-active' : ''}
+				class={pasiveClass}
 			>
-				<SizeSVG class="w-5 h-5" />
+				<SizeSVG class={SVGStyle} />
 			</button>
 			<div class="flex content-center">
 				<input type="color" id="color-input" on:input={setColor} class="collapse h-0 w-0 p-0 m-0" />
 				<label for="color-input">
-					<ColorSVG class="w-5 h-5" />
+					<ColorSVG class={SVGStyle} />
 				</label>
 			</div>
 			<button
@@ -151,30 +139,29 @@
 					}
 				}}
 			>
-				<ImageSVG class="w-5 h-5" />
+				<ImageSVG class={SVGStyle} />
 			</button>
 		</div>
-		<div class="flex gap-2 justify-center">
+		<div class="card variant-soft-surface rounded-full flex gap-2 justify-center">
 			<button
 				on:click={() => editor.chain().focus().undo().run()}
 				disabled={!editor.can().chain().focus().undo().run()}
 			>
-				<UndoSVG class="w-5 h-5" />
+				<UndoSVG class={SVGStyle} />
 			</button>
 			<button
 				on:click={() => editor.chain().focus().redo().run()}
 				disabled={!editor.can().chain().focus().redo().run()}
 			>
-				<Redo class="w-5 h-5" />
+				<Redo class={SVGStyle} />
 			</button>
 		</div>
 		<button
 			on:click={() => editor.chain().focus().unsetAllMarks().run()}
 			disabled={!editor.can().chain().focus().unsetAllMarks().run()}
-			class={setActiveClassAttr(editor.isActive('bold'))}
 		>
-			<ClearFormattingSVG class="w-5 h-5" />
+			<ClearFormattingSVG class={SVGStyle} />
 		</button>
 	</div>
 {/if}
-<div class="bg-white text-cyan-400" bind:this={element} />
+<div class="bg-[#c2a6f5] text-black w-full outline-none" bind:this={element} />
