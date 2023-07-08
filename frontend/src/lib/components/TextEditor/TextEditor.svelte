@@ -6,8 +6,6 @@
 	import ClearFormattingSVG from './editorIcons/clear-formatting.svg?component';
 	import UndoSVG from './editorIcons/undo.svg?component';
 	import Redo from './editorIcons/redo.svg?component';
-	import NumberListSVG from './editorIcons/number-list.svg?component';
-	import BulletListSVG from './editorIcons/bullet-list.svg?component';
 	import ColorSVG from './editorIcons/color.svg?component';
 	import SizeSVG from './editorIcons/size.svg?component';
 	import ImageSVG from './editorIcons/image.svg?component';
@@ -98,21 +96,6 @@
 				class={setActiveClassAttr(editor.isActive('underline'))}
 			>
 				<UnderlineIcon class={SVGStyle} />
-			</button>
-		</div>
-
-		<div class="card variant-soft-surface rounded-full flex gap-2 justify-center">
-			<button
-				on:click={() => editor.chain().focus().toggleBulletList().run()}
-				class={setActiveClassAttr(editor.isActive('bulletList'))}
-			>
-				<BulletListSVG class={SVGStyle} />
-			</button>
-			<button
-				on:click={() => editor.chain().focus().toggleOrderedList().run()}
-				class={setActiveClassAttr(editor.isActive('orderedList'))}
-			>
-				<NumberListSVG class={SVGStyle} />
 			</button>
 		</div>
 
