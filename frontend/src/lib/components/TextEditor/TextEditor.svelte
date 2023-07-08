@@ -1,17 +1,18 @@
 <script lang="ts">
-	import './styles.scss';
+
 	import ItalicSVG from './editorIcons/italic.svg?component';
 	import BoldSVG from './editorIcons/bold.svg?component';
 	import StrikeSVG from './editorIcons/strikethrough.svg?component';
 	import UnderlineIcon from './editorIcons/underline.svg?component';
 	import ClearFormattingSVG from './editorIcons/clear-formatting.svg?component';
-	import Undo from './editorIcons/undo.svg?component';
+	import UndoSVG from './editorIcons/undo.svg?component';
 	import Redo from './editorIcons/redo.svg?component';
-	import NumberList from './editorIcons/number-list.svg?component';
-	import BulletList from './editorIcons/bullet-list.svg?component';
-	import ColorIcon from './editorIcons/color.svg?component';
-	import Size from './editorIcons/size.svg?component';
-
+	import NumberListSVG from './editorIcons/number-list.svg?component';
+	import BulletListSVG from './editorIcons/bullet-list.svg?component';
+	import ColorSVG from './editorIcons/color.svg?component';
+	import SizeSVG from './editorIcons/size.svg?component';
+	import ImageSVG from './editorIcons/image.svg?component';
+	
 	import StarterKit from '@tiptap/starter-kit'; // maybe debloat at one point
 	import TextStyle from '@tiptap/extension-text-style';
 	import FontFamily from '@tiptap/extension-font-family';
@@ -80,8 +81,9 @@
 
 {#if editor}
 	{editor.getHTML()}
-	<div class="bg-slate-600">
-		<div class="flex gap-5">
+
+	<div class="bg-slate-600 flex gap-7 p-3">
+		<div class="flex gap-2 items-center justify-center">
 			<button
 				on:click={() => editor.chain().focus().toggleBold().run()}
 				disabled={!editor.can().chain().focus().toggleBold().run()}
@@ -109,45 +111,34 @@
 			>
 				<UnderlineIcon class="w-5 h-5" />
 			</button>
-			<button on:click={() => editor.chain().focus().unsetAllMarks().run()}>
-				<ClearFormattingSVG class="w-5 h-5" /></button
-			>
+		</div>
 
+		<div class="flex gap-2 items-center justify-center">
 			<button
 				on:click={() => editor.chain().focus().toggleBulletList().run()}
 				class={editor.isActive('bulletList') ? 'is-active' : ''}
 			>
-				<BulletList class="w-5 h-5" />
+				<BulletListSVG class="w-5 h-5" />
 			</button>
 			<button
 				on:click={() => editor.chain().focus().toggleOrderedList().run()}
 				class={editor.isActive('orderedList') ? 'is-active' : ''}
 			>
-				<NumberList class="w-5 h-5" />
+				<NumberListSVG class="w-5 h-5" />
 			</button>
+		</div>
 
-			<button
-				on:click={() => editor.chain().focus().undo().run()}
-				disabled={!editor.can().chain().focus().undo().run()}
-			>
-				<Undo class="w-5 h-5" />
-			</button>
-			<button
-				on:click={() => editor.chain().focus().redo().run()}
-				disabled={!editor.can().chain().focus().redo().run()}
-			>
-				<Redo class="w-5 h-5" />
-			</button>
+		<div class="flex justify-center gap-2">
 			<button
 				on:click={() => editor.chain().focus().setFontSize('20px').run()}
 				class={editor.isActive('textStyle', { fontSize: '20px' }) ? 'is-active' : ''}
 			>
-				<Size class="w-5 h-5" />
+				<SizeSVG class="w-5 h-5" />
 			</button>
 			<div class="flex content-center">
 				<input type="color" id="color-input" on:input={setColor} class="collapse h-0 w-0 p-0 m-0" />
 				<label for="color-input">
-					<ColorIcon class="w-5 h-5" />
+					<ColorSVG class="w-5 h-5" />
 				</label>
 			</div>
 			<button
@@ -159,8 +150,31 @@
 						}
 					}
 				}}
-			/>
+			>
+				<ImageSVG class="w-5 h-5" />
+			</button>
 		</div>
+		<div class="flex gap-2 justify-center">
+			<button
+				on:click={() => editor.chain().focus().undo().run()}
+				disabled={!editor.can().chain().focus().undo().run()}
+			>
+				<UndoSVG class="w-5 h-5" />
+			</button>
+			<button
+				on:click={() => editor.chain().focus().redo().run()}
+				disabled={!editor.can().chain().focus().redo().run()}
+			>
+				<Redo class="w-5 h-5" />
+			</button>
+		</div>
+		<button
+			on:click={() => editor.chain().focus().unsetAllMarks().run()}
+			disabled={!editor.can().chain().focus().unsetAllMarks().run()}
+			class={setActiveClassAttr(editor.isActive('bold'))}
+		>
+			<ClearFormattingSVG class="w-5 h-5" />
+		</button>
 	</div>
 {/if}
 <div class="bg-white text-cyan-400" bind:this={element} />
