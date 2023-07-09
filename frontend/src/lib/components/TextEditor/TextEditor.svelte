@@ -50,6 +50,7 @@
 			},
 			onSelectionUpdate() {
 				setTextSizeInputValue();
+				setTextcolorInputValue();
 			}
 		});
 	});
@@ -81,12 +82,24 @@
 
 	function setTextSizeInputValue() {
 		let rawValue = editor.getAttributes('textStyle').fontSize;
-		if (rawValue === undefined) {
+		if (!rawValue) {
 			textSizeInputValue = 16;
 		} else {
 			rawValue = rawValue.replace('px', '');
 			textSizeInputValue = Number(rawValue);
 		}
+	}
+
+	let textColorInputValue = '#000000';
+	let colorStyling = 'fill: ' + textColorInputValue + ';';
+	function setTextcolorInputValue() {
+		let rawValue = editor.getAttributes('textStyle').color;
+		if (!rawValue) {
+			textColorInputValue = '#000000';
+		} else {
+			textColorInputValue = rawValue;
+		}
+		colorStyling = 'fill: ' + textColorInputValue + ';';
 	}
 
 	const textSizePopup: PopupSettings = {
@@ -140,9 +153,15 @@
 				<SizeSVG class={SVGStyle} />
 			</button>
 			<div class="flex content-center">
-				<input type="color" id="color-input" on:input={setColor} class="collapse h-0 w-0 p-0 m-0" />
+				<input
+					type="color"
+					id="color-input"
+					on:input={setColor}
+					bind:value={textColorInputValue}
+					class="collapse h-0 w-0 p-0 m-0"
+				/>
 				<label for="color-input" class={pasiveClass}>
-					<ColorSVG class={SVGStyle} />
+					<ColorSVG bind:style={colorStyling} class={SVGStyle} />
 				</label>
 			</div>
 			<button
@@ -196,6 +215,7 @@
 	/>
 </div>
 
+<!-- Image popup -->
 <div class="card p-4 shadow-xl" data-popup="image-url-popup">
 	<input
 		type="number"
