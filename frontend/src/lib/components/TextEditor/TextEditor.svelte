@@ -45,6 +45,7 @@
 			extensions: [StarterKit, TextStyle, FontSize, Color, Image, FontFamily, Underline],
 			content: content,
 			onTransaction: () => {
+				setTextcolorInputValue();
 				// force re-render so `editor.isActive` works as expected
 				editor = editor;
 			},
