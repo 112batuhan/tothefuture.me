@@ -54,6 +54,7 @@ async fn generate_session_token(random: Arc<Mutex<ChaCha8Rng>>) -> String {
     u128::from_le_bytes(u128_pool).to_string()
 }
 
+// Can be improved by changing "=" to startswith and string slicing.
 fn get_cookie_with_key(cookies: &str, cookie_key: &str) -> Result<String, ApiError> {
     let (_, cookie_value) = cookies
         .split(";")

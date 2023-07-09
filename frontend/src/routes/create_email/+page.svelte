@@ -5,6 +5,7 @@
 	import { goto } from '$app/navigation';
 	import { PUBLIC_BACKEND_URL } from '$env/static/public';
 	import { logged_in } from '$lib/stores/login_state';
+	import TextEditor from '$lib/components/TextEditor/TextEditor.svelte';
 
 	let date_step_lock = false;
 
@@ -15,7 +16,14 @@
 	let date: string = '';
 	let subject: string = '';
 	let is_html: boolean = false;
-	let body_text: string = '';
+	let body_text: string = `<p>This is an example text.</p>
+	<p><strong>You</strong> <em>can</em> <s>apply</s> <u>basic</u> <strong><em><s><u>styles.</u></s></em></strong></p>
+	<p>You <span style="font-size: 11px">can</span> change <span style="font-size: 25px">the</span> text size.</p>
+	<p>You <span style="color: #1a5fb4">can </span>change <span style="color: #c01c28">the
+		</span> text c<span style="color: #986a44">olor.</span></p>
+	<p>Image import is work in progress.</p>
+	<p></p>
+	<p>Have fun.</p>`;
 	let body_html: string = `
               <head>
                 <style>
@@ -122,7 +130,11 @@
 			<svelte:fragment slot="header">
 				<div class="text-center">Edit the Email!</div>
 			</svelte:fragment>
-			<div class="text-center"><HtmlEditor bind:text={body_html} /></div>
+			{#if is_html}
+				<div class="text-center"><HtmlEditor bind:text={body_html} /></div>
+			{:else}
+				<TextEditor initialContent={body_text} bind:exportContent={body_text} />
+			{/if}
 		</Step>
 		<!-- ... -->
 	</Stepper>
