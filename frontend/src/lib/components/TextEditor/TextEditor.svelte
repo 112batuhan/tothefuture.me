@@ -116,9 +116,7 @@
 </script>
 
 {#if editor}
-	{editor.getHTML()}
-
-	<div class="card variant-soft-surface flex gap-7 p-3 w-full">
+	<div class="card variant-soft-surface flex gap-7 p-3 w-full flex-wrap">
 		<div class="card variant-soft-surface rounded-full flex gap-2 justify-center">
 			<button
 				on:click={() => editor.chain().focus().toggleBold().run()}
@@ -204,8 +202,13 @@
 		</button>
 	</div>
 {/if}
-<div class="bg-[#c2a6f5] text-black w-full outline-none" bind:this={element} />
-
+<div class="w-full overflow-auto bg-[#c2a6f5]" style="height: 550px;">
+	<div class="text-black w-full" bind:this={element} />
+	{#if editor}
+		<!-- svelte-ignore a11y-click-events-have-key-events -->
+		<div class="w-full h-full" on:click={() => editor.chain().focus().run()} />
+	{/if}
+</div>
 <!-- Popup elements -->
 <div class="card p-4 shadow-xl" data-popup="text-size-popup">
 	<input
