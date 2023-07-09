@@ -192,8 +192,16 @@
 			</button>
 		</div>
 		<button
-			on:click={() => editor.chain().focus().unsetAllMarks().clearNodes().run()}
-			disabled={!editor.can().chain().focus().unsetAllMarks().clearNodes().run()}
+			on:click={() =>
+				editor.chain().focus().unsetAllMarks().clearNodes().setFontFamily('sans-serif').run()}
+			disabled={!editor
+				.can()
+				.chain()
+				.focus()
+				.unsetAllMarks()
+				.clearNodes()
+				.setFontFamily('sans-serif')
+				.run()}
 			class={pasiveClass}
 		>
 			<ClearFormattingSVG class={SVGStyle} />
