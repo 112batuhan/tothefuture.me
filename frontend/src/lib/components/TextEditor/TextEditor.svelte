@@ -24,34 +24,32 @@
 	let element: HTMLDivElement;
 
 	let editor: Editor;
-	let content = `<p>this is a test</p><p>this is a test for all things</p><p></p><p>a
-		lon<strong>g l inea l<u>ong l</u></strong><u>inea long</u><em><u> line</u>a l
-		ong line</em>a long lin&lt; s&gt;ea long lin<strong><s>ea l</s>ong linea <
-		u>lon</u></strong></p><p><strong><u>g li</u></strong><u>nea lon</u>g l
-		ine a lo<span style="font-size: 20px">ng linea long linea l</span>
-		ong li<span>nea long li</span>nea long linea long l</p><p>inea lon
-		g linea long linea long linea long linea long l inea long line
-		a long linea long line</p><p>a long linea long linea long line
-		a long linea long linea long linea long linea long linea lo
-		ng linea l</p><p>ong linea long linea long linea long linea
-		long linea long l inea long linea l</p><p>ong linea lon
-		g linea long linea long linea long linea long linea
-		long linea long l in</p><p>ea long linea long linea
-		long linea long linea long line</p><p></p><p></p>`;
+	export let initialContent = '';
+
+	export let exportContent: string;
 
 	onMount(() => {
+		exportContent = initialContent;
 		editor = new Editor({
 			element: element,
 			extensions: [StarterKit, TextStyle, FontSize, Color, Image, FontFamily, Underline],
-			content: content,
+			content: initialContent,
 			onTransaction: () => {
 				setTextcolorInputValue();
 				// force re-render so `editor.isActive` works as expected
 				editor = editor;
+				exportContent = editor.getHTML();
 			},
 			onSelectionUpdate() {
 				setTextSizeInputValue();
 				setTextcolorInputValue();
+			},
+			onUpdate({ editor }) {
+				exportContent = editor.getHTML();
+			},
+			onCreate({ editor }) {
+				// automatically set font family
+				editor.chain().focus().selectAll().setFontFamily('sans-serif').setTextSelection(0).run();
 			}
 		});
 	});

@@ -81,11 +81,17 @@
 						<div
 							style="border-radius:0.3rem; background-color:#c2a6f5; 100%; height: 350px; overflow: hidden;"
 						>
-							<iframe
-								style="max-width: 100%; max-height: 100%; width: 100%; height: 100%;"
-								title="preview"
-								srcdoc={email.body}
-							/>
+							{#if email.is_html}
+								<iframe
+									style="max-width: 100%; max-height: 100%; width: 100%; height: 100%;"
+									title="preview"
+									srcdoc={email.body}
+								/>{:else}
+								<iframe
+									style="max-width: 100%; max-height: 100%; width: 100%; height: 100%; text-color:#000000;"
+									title="preview"
+									srcdoc={email.body}
+								/>{/if}
 						</div>
 					</svelte:fragment>
 				</AccordionItem>

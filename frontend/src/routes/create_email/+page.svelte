@@ -16,7 +16,14 @@
 	let date: string = '';
 	let subject: string = '';
 	let is_html: boolean = false;
-	let body_text: string = '';
+	let body_text: string = `<p>This is an example text.</p>
+	<p><strong>You</strong> <em>can</em> <s>apply</s> <u>basic</u> <strong><em><s><u>styles.</u></s></em></strong></p>
+	<p>You <span style="font-size: 11px">can</span> change <span style="font-size: 25px">the</span> text size.</p>
+	<p>You <span style="color: #1a5fb4">can </span>change <span style="color: #c01c28">the
+		</span> text c<span style="color: #986a44">olor.</span></p>
+	<p>Image import is work in progress.</p>
+	<p></p>
+	<p>Have fun.</p>`;
 	let body_html: string = `
               <head>
                 <style>
@@ -126,7 +133,7 @@
 			{#if is_html}
 				<div class="text-center"><HtmlEditor bind:text={body_html} /></div>
 			{:else}
-				<TextEditor />
+				<TextEditor initialContent={body_text} bind:exportContent={body_text} />
 			{/if}
 		</Step>
 		<!-- ... -->
