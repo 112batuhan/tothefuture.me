@@ -47,6 +47,9 @@
 			onTransaction: () => {
 				// force re-render so `editor.isActive` works as expected
 				editor = editor;
+			},
+			onSelectionUpdate() {
+				setTextSizeInputValue();
 			}
 		});
 	});
@@ -65,12 +68,35 @@
 		editor.chain().focus().setColor(target.value).run();
 	}
 
-	const popupFeatured: PopupSettings = {
-		// Represents the type of event that opens/closed the popup
+	function setSize(e: Event) {
+		let target = e.target as HTMLInputElement;
+		editor
+			.chain()
+			.focus()
+			.setFontSize(target.value + 'px')
+			.run();
+	}
+
+	let textSizeInputValue = 16;
+
+	function setTextSizeInputValue() {
+		let rawValue = editor.getAttributes('textStyle').fontSize;
+		if (rawValue === undefined) {
+			textSizeInputValue = 16;
+		} else {
+			rawValue = rawValue.replace('px', '');
+			textSizeInputValue = Number(rawValue);
+		}
+	}
+
+	const textSizePopup: PopupSettings = {
 		event: 'click',
-		// Matches the data-popup value on your popup element
-		target: 'popupFeatured',
-		// Defines which side of your trigger the popup will appear
+		target: 'text-size-popup',
+		placement: 'bottom'
+	};
+	const imgeUrlPopup: PopupSettings = {
+		event: 'click',
+		target: 'image-url-popup',
 		placement: 'bottom'
 	};
 </script>
@@ -110,7 +136,7 @@
 		</div>
 
 		<div class="card variant-soft-surface rounded-full flex justify-center gap-2">
-			<button on:click={() => editor.chain().focus().setFontSize('20px').run()} class={pasiveClass}>
+			<button use:popup={textSizePopup} class={pasiveClass}>
 				<SizeSVG class={SVGStyle} />
 			</button>
 			<div class="flex content-center">
@@ -156,12 +182,25 @@
 		>
 			<ClearFormattingSVG class={SVGStyle} />
 		</button>
-		<button use:popup={popupFeatured}>
-			<ClearFormattingSVG class={SVGStyle} />
-		</button>
 	</div>
 {/if}
 <div class="bg-[#c2a6f5] text-black w-full outline-none" bind:this={element} />
 
 <!-- Popup elements -->
-<div class="card p-4 w-72 shadow-xl" data-popup="popupFeatured">this is a test div</div>
+<div class="card p-4 shadow-xl" data-popup="text-size-popup">
+	<input
+		type="number"
+		bind:value={textSizeInputValue}
+		class="w-16 text-black"
+		on:change={setSize}
+	/>
+</div>
+
+<div class="card p-4 shadow-xl" data-popup="image-url-popup">
+	<input
+		type="number"
+		bind:value={textSizeInputValue}
+		class="w-16 text-black"
+		on:change={setSize}
+	/>
+</div>
