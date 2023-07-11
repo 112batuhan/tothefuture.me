@@ -38,18 +38,17 @@
 	afterNavigate(async ({ from }) => {
 		// Run only on first login.
 		// Can be simplified because in first login from returns undefined but this is more safe
-		if (from?.url.origin != $page.url.origin && !logged_in) {
+		if (from?.url.origin != $page.url.origin && !$logged_in) {
 			let res = await fetch(PUBLIC_BACKEND_URL + '/auto_login', {
 				method: 'GET',
 				credentials: 'include'
 			});
-			if (res.status == 201) {
+			if (res.ok) {
 				$logged_in = true;
 				let response_json = await res.json();
 				$user_email = response_json.email;
 				goto('/emails');
 			} else {
-				$logged_in = true;
 				goto('/');
 			}
 		}

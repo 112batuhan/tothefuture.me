@@ -143,11 +143,9 @@ pub async fn login(
 pub async fn auto_login(
     Extension(session): Extension<CurrentUser>,
     State(state): State<Arc<SharedState>>,
-) -> Result<Response, ApiError> {
-    let mut response =
-        Json(state.database.get_user_by_id(session.get_user_id()).await?).into_response();
-    *response.status_mut() = StatusCode::CREATED;
-    Ok(response)
+) -> Result<(), ApiError> {
+    state.database.get_user_by_id(session.get_user_id()).await?;
+    Ok(())
 }
 
 pub async fn logout(
