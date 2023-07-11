@@ -17,11 +17,10 @@
 			if (res.status == 200) {
 				emails = await res.json();
 				// Paginator email length update
-				page.size = emails.length;
-
 				emails.forEach((item: any, i: number) => {
 					item.display_id = i;
 				});
+				page.size = emails.length;
 			} else if (res.status == 401) {
 				$logged_in = false;
 				goto('/');
@@ -40,22 +39,31 @@
 		size: emails.length,
 		amounts: [1, 2, 5, 10]
 	};
-
 	$: paginatedEmails = emails.slice(
 		page.offset * page.limit,
 		page.offset * page.limit + page.limit
 	);
-
 	let active_item = -1;
 
 	function calculateLastActivePage(amount_event: any) {
-		page.offset = Math.floor(active_item / amount_event.detail);
+		if (active_item < 0) {
+			page.offset = 0;
+		} else {
+			page.offset = Math.floor(active_item / amount_event.detail);
+			console.log(page);
+		}
 	}
 </script>
 
 <div class="card p-4 w-[100%] min-w-[600px]">
-	{#if emails.length > 0}
-		<Accordion autocollapse>
+	{#if emails.length > 0}<Paginator
+			class="m-3"
+			bind:settings={page}
+			on:amount={calculateLastActivePage}
+			showNumerals
+			maxNumerals={1}
+		/>
+		<Accordion>
 			{#each paginatedEmails as email}
 				<AccordionItem
 					on:toggle={() => (active_item = email.display_id)}
@@ -100,12 +108,4 @@
 	{:else}
 		<p>No emails found.</p>
 	{/if}
-
-	<Paginator
-		class="m-3"
-		bind:settings={page}
-		on:amount={calculateLastActivePage}
-		showNumerals
-		maxNumerals={1}
-	/>
 </div>
