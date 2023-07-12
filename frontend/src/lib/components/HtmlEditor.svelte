@@ -37,6 +37,8 @@
 					theme="monokai"
 					bind:value={text}
 				/>
+			{:else}
+				<p>Editor is loading</p>
 			{/if}
 		</div>
 	</div>
