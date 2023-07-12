@@ -7,7 +7,7 @@
 	import '../app.postcss';
 	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
 	import { afterNavigate, goto } from '$app/navigation';
-	import { loginStore, userEmail, LoginState } from '$lib/stores/login_state';
+	import { loginStore, userEmail, LoginState } from '$lib/stores/loginState';
 	import { page } from '$app/stores';
 	import { PUBLIC_BACKEND_URL } from '$env/static/public';
 	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
