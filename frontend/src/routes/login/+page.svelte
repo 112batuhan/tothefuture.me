@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { PUBLIC_BACKEND_URL } from '$env/static/public';
-	import { LoginState, loginStore, userEmail } from '$lib/stores/login_state';
+	import { LoginState, loginStore, userEmail } from '$lib/stores/loginState';
 
 	let email = '';
 	let password = '';

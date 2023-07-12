@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { PUBLIC_BACKEND_URL } from '$env/static/public';
-	import { LoginState, loginStore } from '$lib/stores/login_state';
+	import { LoginState, loginStore } from '$lib/stores/loginState';
 	import { Accordion, AccordionItem, Paginator } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
 
