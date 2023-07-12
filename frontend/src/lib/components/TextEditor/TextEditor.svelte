@@ -208,11 +208,15 @@
 		</button>
 	</div>
 {/if}
-<div class="w-full overflow-auto bg-[#c2a6f5]" style="height: 550px;">
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<div
+	class="w-full overflow-x-auto bg-[#c2a6f5]"
+	style="height: 550px; scrollbar-color: rebeccapurple #c2a6f5;"
+	on:click={() => editor.chain().focus().run()}
+>
 	<div class="text-black w-full" bind:this={element} />
 	{#if editor}
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		<div class="w-full h-full" on:click={() => editor.chain().focus().run()} />
 	{/if}
 </div>
 <!-- Popup elements -->

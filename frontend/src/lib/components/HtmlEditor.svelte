@@ -1,20 +1,23 @@
 <script lang="ts">
 	//@ts-nocheck
 	//these libs are beyond me with their weird errors
-	import { AceEditor } from 'svelte-ace';
-	import 'brace/mode/html';
-	import 'brace/theme/monokai';
+
 	import { html } from 'js-beautify';
 	import { onMount } from 'svelte';
 
-	export let text = "";
+	export let text = '';
+	let editor;
 
 	function format() {
 		text = html(text, { preserve_newlines: true, wrap_line_length: 80 });
 	}
 
-	onMount(() => {
+	onMount(async () => {
 		format();
+		await import('brace');
+		await import('brace/mode/html');
+		await import('brace/theme/monokai');
+		editor = (await import('svelte-ace')).AceEditor;
 	});
 </script>
 
@@ -25,7 +28,18 @@
 			<button on:click={format} class="card variant-ghost-surface p-2 mr-5">Beautify</button>
 		</div>
 		<div class="mt-3">
-			<AceEditor width="100%" height="550px" lang="html" theme="monokai" bind:value={text} />
+			{#if editor}
+				<svelte:component
+					this={editor}
+					width="100%"
+					height="550px"
+					lang="html"
+					theme="monokai"
+					bind:value={text}
+				/>
+			{:else}
+				<p>Editor is loading</p>
+			{/if}
 		</div>
 	</div>
 	<div class="card variant-soft-surface w-full lg:w-1/2 p-4">

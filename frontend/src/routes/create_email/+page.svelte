@@ -4,7 +4,7 @@
 	import HtmlEditor from '$lib/components/HtmlEditor.svelte';
 	import { goto } from '$app/navigation';
 	import { PUBLIC_BACKEND_URL } from '$env/static/public';
-	import { logged_in } from '$lib/stores/login_state';
+	import { LoginState, loginStore } from '$lib/stores/login_state';
 	import TextEditor from '$lib/components/TextEditor/TextEditor.svelte';
 
 	let date_step_lock = false;
@@ -69,7 +69,7 @@
 			if (res.status == 201) {
 				goto('/emails');
 			} else if (res.status == 401) {
-				$logged_in = false;
+				$loginStore = LoginState.Not;
 				goto('/');
 			}
 		} catch (error) {

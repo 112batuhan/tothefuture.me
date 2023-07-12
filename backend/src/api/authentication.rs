@@ -17,6 +17,7 @@ use serde::{Deserialize, Serialize};
 use tokio::sync::Mutex;
 
 use super::{ApiError, CurrentUser, SharedState};
+use crate::entities::users;
 use crate::queries::DbError;
 
 const SESSION_TOKEN_KEY: &'static str = "timecapsule_session_token";
@@ -143,11 +144,10 @@ pub async fn login(
 pub async fn auto_login(
     Extension(session): Extension<CurrentUser>,
     State(state): State<Arc<SharedState>>,
-) -> Result<Response, ApiError> {
-    let mut response =
-        Json(state.database.get_user_by_id(session.get_user_id()).await?).into_response();
-    *response.status_mut() = StatusCode::CREATED;
-    Ok(response)
+) -> Result<Json<users::Model>, ApiError> {
+    Ok(Json(
+        state.database.get_user_by_id(session.get_user_id()).await?,
+    ))
 }
 
 pub async fn logout(

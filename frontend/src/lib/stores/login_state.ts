@@ -1,4 +1,10 @@
 import { writable } from 'svelte/store';
 
-export const logged_in = writable(false);
-export const user_email = writable("")
+export enum LoginState{
+    Logged,
+    Not,
+    FirstLogin,
+}
+
+export const loginStore = writable(LoginState.FirstLogin);
+export const userEmail = writable("")
