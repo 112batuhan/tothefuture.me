@@ -14,10 +14,10 @@
 
 	onMount(async () => {
 		format();
+		await import('brace');
 		await import('brace/mode/html');
 		await import('brace/theme/monokai');
-		editor = (await import('svelte-ace')).default;
-		console.log(editor);
+		editor = (await import('svelte-ace')).AceEditor;
 	});
 </script>
 

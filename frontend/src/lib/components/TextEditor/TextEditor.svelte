@@ -208,12 +208,13 @@
 		</button>
 	</div>
 {/if}
-<div class="w-full overflow-auto bg-[#c2a6f5]" style="height: 550px;">
-	<div class="text-black w-full" bind:this={element} />
-	{#if editor}
-		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		<div class="w-full h-full" on:click={() => editor.chain().focus().run()} />
-	{/if}
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<div
+	class="w-full overflow-auto bg-[#c2a6f5]"
+	style="height: 550px;"
+	on:click={() => editor.chain().focus().run()}
+>
+	<div class="text-black w-full overflow-x-scroll" bind:this={element} />
 </div>
 <!-- Popup elements -->
 <div class="card p-4 shadow-xl" data-popup="text-size-popup">

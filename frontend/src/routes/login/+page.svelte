@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { PUBLIC_BACKEND_URL } from '$env/static/public';
-	import { logged_in, user_email } from '$lib/stores/login_state';
+	import { LoginState, loginStore, userEmail } from '$lib/stores/login_state';
 
 	let email = '';
 	let password = '';
@@ -16,10 +16,12 @@
 			}
 		});
 		if (res.status == 201) {
-			$logged_in = true;
+			$loginStore = LoginState.Logged;
 			let response_json = await res.json();
-			$user_email = response_json.email;
+			$userEmail = response_json.email;
 			goto('/emails');
+		} else {
+			$loginStore = LoginState.Not;
 		}
 	}
 </script>

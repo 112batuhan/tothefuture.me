@@ -7,7 +7,7 @@
 	import '../app.postcss';
 	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
 	import { afterNavigate, goto } from '$app/navigation';
-	import { logged_in, user_email } from '$lib/stores/login_state';
+	import { loginStore, userEmail, LoginState } from '$lib/stores/login_state';
 	import { page } from '$app/stores';
 	import { PUBLIC_BACKEND_URL } from '$env/static/public';
 	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
@@ -21,7 +21,7 @@
 			credentials: 'include'
 		});
 		if (res.ok || res.status === 401) {
-			$logged_in = false;
+			$loginStore = LoginState.Not;
 			goto('/');
 		}
 	}
@@ -37,19 +37,22 @@
 
 	afterNavigate(async ({ from }) => {
 		// Run only on first login.
-		// Can be simplified because in first login from returns undefined but this is more safe
-		if (from?.url.origin != $page.url.origin && !$logged_in) {
-			let res = await fetch(PUBLIC_BACKEND_URL + '/auto_login', {
-				method: 'GET',
-				credentials: 'include'
-			});
-			if (res.ok) {
-				$logged_in = true;
-				let response_json = await res.json();
-				$user_email = response_json.email;
-				goto('/emails');
-			} else {
-				goto('/');
+		if ($loginStore === LoginState.FirstLogin) {
+			try {
+				let res = await fetch(PUBLIC_BACKEND_URL + '/auto_login', {
+					method: 'GET',
+					credentials: 'include'
+				});
+				if (res.ok) {
+					$loginStore = LoginState.Logged;
+					let response_json = await res.json();
+					$userEmail = response_json.email;
+				} else {
+					$loginStore = LoginState.Not;
+					goto('/');
+				}
+			} catch {
+				$loginStore = LoginState.Not;
 			}
 		}
 	});
@@ -66,12 +69,12 @@
 				</button>
 			</svelte:fragment>
 
-			{#if $logged_in}
-				<div class="card p-2 variant-soft-surface">&#9993;&#65039; {$user_email}</div>
+			{#if $loginStore === LoginState.Logged}
+				<div class="card p-2 variant-soft-surface">&#9993;&#65039; {$userEmail}</div>
 			{/if}
 
 			<svelte:fragment slot="trail">
-				{#if $logged_in}
+				{#if $loginStore === LoginState.Logged}
 					{#each logged_in_hrefs as href}
 						{#if $page.route.id != href.link}
 							<button on:click={() => goto(href.link)} class="btn btn-sm variant-ghost-surface">
@@ -80,7 +83,7 @@
 						{/if}
 					{/each}
 					<button on:click={logout} class="btn btn-sm variant-ghost-surface"> Logout</button>
-				{:else}
+				{:else if $loginStore === LoginState.Not}
 					{#each logged_out_hrefs as href}
 						{#if $page.route.id != href.link}
 							<button on:click={() => goto(href.link)} class="btn btn-sm variant-ghost-surface">
