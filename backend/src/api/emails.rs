@@ -17,13 +17,21 @@ pub struct RequestEmailBody {
     date: String,
 }
 
+fn check_and_set_date(raw_date: String) -> Result<chrono::NaiveDate, ApiError> {
+    let send_date = chrono::NaiveDate::from_str(&raw_date)?;
+    let current_date: chrono::NaiveDate = chrono::Utc::now().naive_utc().into();
+    if current_date > send_date {
+        return Ok(current_date);
+    }
+    Ok(send_date)
+}
+
 pub async fn create_email(
     Extension(session): Extension<CurrentUser>,
     State(state): State<Arc<SharedState>>,
     Json(request_body): Json<RequestEmailBody>,
 ) -> Result<StatusCode, ApiError> {
-    let send_date = chrono::NaiveDate::from_str(&request_body.date)?;
-
+    let send_date = check_and_set_date(request_body.date)?;
     state
         .database
         .create_email(

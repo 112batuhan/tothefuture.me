@@ -5,6 +5,7 @@ use axum::http::header::{self, COOKIE};
 use axum::http::{HeaderMap, Request};
 use axum::response::{IntoResponse, Response};
 use axum::{Extension, Json};
+use email_address::*;
 use itertools::Itertools;
 use lazy_static::lazy_static;
 use pbkdf2::password_hash::rand_core::OsRng;
@@ -20,6 +21,7 @@ use super::{ApiError, CurrentUser, SharedState};
 use crate::entities::users;
 use crate::queries::DbError;
 
+const PASSWORD_MIN_LENGTH: usize = 6;
 const SESSION_TOKEN_KEY: &'static str = "timecapsule_session_token";
 // Set the value to the "SameSite=strict" in servers, set to empty string in local.
 // Don't forget to set it in prod environment :)
@@ -88,6 +90,12 @@ pub async fn sign_up(
     State(state): State<Arc<SharedState>>,
     Json(body): Json<RequestUserBody>,
 ) -> Result<StatusCode, ApiError> {
+    if !EmailAddress::is_valid(&body.email) {
+        return Err(ApiError::BadEmail);
+    }
+    if body.password.len() < PASSWORD_MIN_LENGTH {
+        return Err(ApiError::BadPassword);
+    }
     let hashed_password = hash_password(&body.password)?;
 
     state

@@ -12,6 +12,7 @@
 	$: showMandatory = false;
 	$: showPassword = false;
 	$: showEmailFormat = false;
+	$: showShortPassword = false;
 
 	function checkInputs(): boolean {
 		let emailResultTuple = checkEmpty(emailInput);
@@ -37,6 +38,15 @@
 		showPassword = passwordInput.value !== secondPasswordInput.value;
 
 		if (showPassword) {
+			secondPasswordInput.state = inputState.Error;
+			secondPasswordInput = secondPasswordInput;
+			passwordInput.state = inputState.Error;
+			passwordInput = passwordInput;
+			return false;
+		}
+
+		showShortPassword = passwordInput.value.length < 6;
+		if (showShortPassword) {
 			secondPasswordInput.state = inputState.Error;
 			secondPasswordInput = secondPasswordInput;
 			passwordInput.state = inputState.Error;
@@ -110,6 +120,8 @@
 			Please make sure that the two passwords are the same.
 		{:else if showEmailFormat}
 			Invalid E-Mail format.
+		{:else if showShortPassword}
+			Password must be longer than 6 characters.
 		{/if}
 	</header>
 
