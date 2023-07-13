@@ -63,15 +63,13 @@ async fn main() {
 
     let app = Router::new()
         .route("/email/:email_id/duplicate", get(duplicate_email))
-        .route("/email/:email_id", patch(update_email))
-        .route("/email/:email_id", delete(delete_email))
         .route("/email/:email_id/send", get(send_demo_email))
+        .route("/email/:email_id", patch(update_email).delete(delete_email))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
             check_email_owner,
         ))
-        .route("/email", get(get_emails))
-        .route("/email", post(create_email))
+        .route("/email", post(create_email).get(get_emails))
         .route("/auto_login", get(auto_login))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
