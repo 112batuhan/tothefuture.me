@@ -63,7 +63,7 @@ pub async fn send_demo_email(
     Extension(session): Extension<CurrentUser>,
     State(state): State<Arc<SharedState>>,
 ) -> Result<(), ApiError> {
-    let email = state.database.get_emails_by_id(email_id).await?;
+    let email = state.database.get_email_by_id(email_id).await?;
     if email.owner != session.get_user_id() {
         return Err(ApiError::UnauthorizedEmail);
     }
