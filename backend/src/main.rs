@@ -7,11 +7,14 @@ use std::net::SocketAddr;
 use std::time::Duration;
 
 use api::authentication::{auto_login, check_session_token, login, logout, sign_up};
-use api::emails::{create_email, get_emails, send_demo_email};
+use api::emails::{
+    check_email_owner, create_email, delete_email, duplicate_email, get_emails, send_demo_email,
+    update_email,
+};
 use api::SharedState;
 use axum::error_handling::HandleErrorLayer;
 use axum::http::{header, Method};
-use axum::routing::{delete, get, post};
+use axum::routing::{delete, get, patch, post};
 use axum::{middleware, BoxError, Router};
 use dotenv::dotenv;
 use tower::ServiceBuilder;
@@ -36,7 +39,13 @@ async fn main() {
     let origins = [std::env::var("FRONTEND_URL").unwrap().parse().unwrap()];
 
     let cors = CorsLayer::new()
-        .allow_methods([Method::GET, Method::POST, Method::DELETE, Method::OPTIONS])
+        .allow_methods([
+            Method::GET,
+            Method::POST,
+            Method::DELETE,
+            Method::OPTIONS,
+            Method::PATCH,
+        ])
         .allow_headers([header::COOKIE, header::ALLOW, header::CONTENT_TYPE])
         .allow_origin(origins)
         .allow_credentials(true)
@@ -53,10 +62,15 @@ async fn main() {
     );
 
     let app = Router::new()
-        .route("/send_email/:email_id", get(send_demo_email))
+        .route("/email/:email_id/duplicate", get(duplicate_email))
+        .route("/email/:email_id/send", get(send_demo_email))
+        .route("/email/:email_id", patch(update_email).delete(delete_email))
+        .route_layer(middleware::from_fn_with_state(
+            state.clone(),
+            check_email_owner,
+        ))
+        .route("/email", post(create_email).get(get_emails))
         .route("/auto_login", get(auto_login))
-        .route("/get_emails", get(get_emails))
-        .route("/create_email", post(create_email))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
             check_session_token,
@@ -76,7 +90,7 @@ async fn main() {
         )
         .layer(cors)
         .with_state(state);
-        
+
     let addr = SocketAddr::from((
         [0, 0, 0, 0],
         std::env::var("PORT").unwrap().parse::<u16>().unwrap(),

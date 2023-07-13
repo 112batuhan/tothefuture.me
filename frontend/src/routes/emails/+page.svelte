@@ -9,7 +9,7 @@
 
 	onMount(async () => {
 		try {
-			const res = await fetch(PUBLIC_BACKEND_URL + '/get_emails', {
+			const res = await fetch(PUBLIC_BACKEND_URL + '/email', {
 				method: 'GET',
 				credentials: 'include'
 			});

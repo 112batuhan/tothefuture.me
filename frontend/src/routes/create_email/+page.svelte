@@ -52,7 +52,7 @@
 
 	async function create_email() {
 		try {
-			const res = await fetch(PUBLIC_BACKEND_URL + '/create_email', {
+			const res = await fetch(PUBLIC_BACKEND_URL + '/email', {
 				method: 'POST',
 				credentials: 'include',
 				body: JSON.stringify({
