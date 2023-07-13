@@ -21,6 +21,7 @@ use super::{ApiError, CurrentUser, SharedState};
 use crate::entities::users;
 use crate::queries::DbError;
 
+const PASSWORD_MIN_LENGTH: usize = 6;
 const SESSION_TOKEN_KEY: &'static str = "timecapsule_session_token";
 // Set the value to the "SameSite=strict" in servers, set to empty string in local.
 // Don't forget to set it in prod environment :)
@@ -92,7 +93,9 @@ pub async fn sign_up(
     if !EmailAddress::is_valid(&body.email) {
         return Err(ApiError::BadEmail);
     }
-
+    if body.password.len() < PASSWORD_MIN_LENGTH {
+        return Err(ApiError::BadPassword);
+    }
     let hashed_password = hash_password(&body.password)?;
 
     state

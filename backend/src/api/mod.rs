@@ -69,6 +69,8 @@ pub enum ApiError {
     MissingSessionTokenInClientRequest,
     #[error("Bad E-Mail.")]
     BadEmail,
+    #[error("Bad Password.")]
+    BadPassword,
     #[error("Date parse error: {0}")]
     BadDate(#[from] chrono::ParseError),
     // later improve this. reqwest errors are way to convoluted.
@@ -105,6 +107,7 @@ impl ApiError {
             // later improve this.
             ApiError::EmailSend(_) => StatusCode::INTERNAL_SERVER_ERROR,
             ApiError::UnauthorizedEmail => StatusCode::UNAUTHORIZED,
+            ApiError::BadPassword => StatusCode::BAD_REQUEST,
         }
     }
 
@@ -127,6 +130,7 @@ impl ApiError {
             ApiError::BadDate(_) => "bad_date".to_string(),
             ApiError::EmailSend(_) => "email_send_error".to_string(),
             ApiError::UnauthorizedEmail => "unauthorized_email_send".to_string(),
+            ApiError::BadPassword => "bad_password".to_string(),
         };
 
         let message = self.to_string();
