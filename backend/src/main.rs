@@ -71,8 +71,8 @@ async fn main() {
             check_email_owner,
         ))
         .route("/email", get(get_emails))
+        .route("/email", post(create_email))
         .route("/auto_login", get(auto_login))
-        .route("/create_email", post(create_email))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
             check_session_token,
