@@ -65,7 +65,7 @@ async fn main() {
         .route("/email/:email_id/duplicate", get(duplicate_email))
         .route("/email/:email_id", patch(update_email))
         .route("/email/:email_id", delete(delete_email))
-        .route("/email/:email_id", get(send_demo_email))
+        .route("/email/:email_id/send", get(send_demo_email))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
             check_email_owner,
