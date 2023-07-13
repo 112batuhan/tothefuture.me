@@ -5,6 +5,7 @@ use axum::http::header::{self, COOKIE};
 use axum::http::{HeaderMap, Request};
 use axum::response::{IntoResponse, Response};
 use axum::{Extension, Json};
+use email_address::*;
 use itertools::Itertools;
 use lazy_static::lazy_static;
 use pbkdf2::password_hash::rand_core::OsRng;
@@ -12,7 +13,6 @@ use pbkdf2::password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, Salt
 use pbkdf2::Pbkdf2;
 use rand_chacha::ChaCha8Rng;
 use rand_core::RngCore;
-use regex::Regex;
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 use tokio::sync::Mutex;
@@ -89,11 +89,10 @@ pub async fn sign_up(
     State(state): State<Arc<SharedState>>,
     Json(body): Json<RequestUserBody>,
 ) -> Result<StatusCode, ApiError> {
-    // I don't think this is a bottleneck to initialize it here every time. Can be put in state.
-    let re = Regex::new(r"/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/").unwrap();
-    if !re.is_match(&body.email) {
+    if !EmailAddress::is_valid(&body.email) {
         return Err(ApiError::BadEmail);
     }
+
     let hashed_password = hash_password(&body.password)?;
 
     state

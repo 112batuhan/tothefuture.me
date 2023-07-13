@@ -688,6 +688,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7fcaabb2fef8c910e7f4c7ce9f67a1283a1715879a7c230ca9d6d1ae31f16d91"
 
 [[package]]
+name = "email_address"
+version = "0.2.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e2153bd83ebc09db15bcbdc3e2194d901804952e3dc96967e1cd3b0c5c32d112"
+dependencies = [
+ "serde",
+]
+
+[[package]]
 name = "encoding_rs"
 version = "0.8.32"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2677,6 +2686,7 @@ dependencies = [
  "axum-macros",
  "chrono",
  "dotenv",
+ "email_address",
  "http-body",
  "itertools 0.11.0",
  "lazy_static",
@@ -2685,7 +2695,6 @@ dependencies = [
  "rand_chacha",
  "rand_core",
  "redis",
- "regex",
  "reqwest",
  "sea-orm",
  "serde",
