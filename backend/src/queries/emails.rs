@@ -48,10 +48,9 @@ impl Db {
         email.ok_or(DbError::EmptyQuery)
     }
 
-    pub async fn delete_email(&self, email_id: i64) -> Result<(), DbError> {
-        let delete_result = emails::Entity::delete_by_id(email_id)
-            .exec(&self.pg_con)
-            .await?;
+    pub async fn delete_email(&self, email: emails::Model) -> Result<(), DbError> {
+        let email: emails::ActiveModel = email.into();
+        let delete_result = email.delete(&self.pg_con).await?;
         if delete_result.rows_affected == 0 {
             Err(DbError::EmptyQuery)
         } else {
@@ -61,13 +60,13 @@ impl Db {
 
     pub async fn update_email(
         &self,
-        email_id: i64,
+        email: emails::Model,
         subject: String,
         is_html: bool,
         body: String,
         send_date: chrono::NaiveDate,
     ) -> Result<emails::Model, DbError> {
-        let mut email: emails::ActiveModel = self.get_email_by_id(email_id).await?.into();
+        let mut email: emails::ActiveModel = email.into();
         email.subject = Set(subject);
         email.is_html = Set(is_html);
         email.body = Set(body);
@@ -76,8 +75,8 @@ impl Db {
         Ok(email.update(&self.pg_con).await?)
     }
 
-    pub async fn duplicate_email(&self, email_id: i64) -> Result<emails::Model, DbError> {
-        let mut email: emails::ActiveModel = self.get_email_by_id(email_id).await?.into();
+    pub async fn duplicate_email(&self, email: emails::Model) -> Result<emails::Model, DbError> {
+        let mut email: emails::ActiveModel = email.into();
         email.id = ActiveValue::default();
         Ok(email.insert(&self.pg_con).await?)
     }
