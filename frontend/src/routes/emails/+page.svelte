@@ -105,20 +105,13 @@
 		}
 	}
 
-	const modal: ModalSettings = {
-		type: 'confirm',
-
-		title: 'Please confirm the deletion.',
-		body: 'Are you sure you want to delete the e-mail? It will be deleted forever.',
-		response: (r: boolean) => console.log('response:', r)
-	};
-
 	function triggerModal(mail_id: string) {
 		new Promise<string>((resolve) => {
 			const modal: ModalSettings = {
 				type: 'confirm',
-				title: 'Please Confirm',
-				body: 'Are you sure you wish to proceed?',
+
+				title: 'Please confirm the deletion.',
+				body: 'Are you sure you want to delete the e-mail? It will be deleted forever.',
 				response: (r: boolean) => {
 					if (r) {
 						resolve(mail_id);
