@@ -106,7 +106,7 @@ impl ApiError {
             ApiError::BadDate(_) => StatusCode::BAD_REQUEST,
             // later improve this.
             ApiError::EmailSend(_) => StatusCode::INTERNAL_SERVER_ERROR,
-            ApiError::UnauthorizedEmail => StatusCode::UNAUTHORIZED,
+            ApiError::UnauthorizedEmail => StatusCode::FORBIDDEN,
             ApiError::BadPassword => StatusCode::BAD_REQUEST,
         }
     }

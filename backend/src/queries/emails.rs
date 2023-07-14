@@ -76,8 +76,10 @@ impl Db {
     }
 
     pub async fn duplicate_email(&self, email: emails::Model) -> Result<emails::Model, DbError> {
+        let new_subject = format!("copy of {}", email.subject);
         let mut email: emails::ActiveModel = email.into();
         email.id = ActiveValue::default();
+        email.subject = Set(new_subject);
         Ok(email.insert(&self.pg_con).await?)
     }
 }

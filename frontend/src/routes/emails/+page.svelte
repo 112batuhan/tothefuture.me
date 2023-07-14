@@ -4,10 +4,16 @@
 	import { LoginState, loginStore } from '$lib/stores/loginState';
 	import { Accordion, AccordionItem, Paginator } from '@skeletonlabs/skeleton';
 	import { onMount } from 'svelte';
+	import { modalStore } from '@skeletonlabs/skeleton';
+	import type { ModalSettings } from '@skeletonlabs/skeleton';
 
-	let emails: any = [];
+	import DeleteSVG from './emailIcons/delete.svg?component';
+	import EditSVG from './emailIcons/edit.svg?component';
+	import EmailSendSVG from './emailIcons/emailSend.svg?component';
+	import HideSVG from './emailIcons/hide.svg?component';
+	import DuplicateSVG from './emailIcons/duplicate.svg?component';
 
-	onMount(async () => {
+	async function fetchMails() {
 		try {
 			const res = await fetch(PUBLIC_BACKEND_URL + '/email', {
 				method: 'GET',
@@ -16,22 +22,67 @@
 
 			if (res.status == 200) {
 				emails = await res.json();
+				emails = emails.reverse();
 				// Paginator email length update
 				emails.forEach((item: any, i: number) => {
 					item.display_id = i;
 				});
 				page.size = emails.length;
+				active_item = 0;
+			} else if (res.status == 204) {
+				emails = [];
 			} else if (res.status == 401) {
 				$loginStore = LoginState.Not;
 				goto('/');
-			} else {
-				emails = [];
 			}
 		} catch (error) {
 			console.error(error);
-			emails = [];
 		}
-	});
+	}
+
+	async function duplicateMail(email_id: string) {
+		try {
+			const res = await fetch(PUBLIC_BACKEND_URL + '/email/' + email_id + '/duplicate', {
+				method: 'get',
+				credentials: 'include'
+			});
+
+			if (res.status == 401) {
+				$loginStore = LoginState.Not;
+				goto('/');
+			} else if (res.status == 403) {
+				console.error("trying to duplicate a mail that doesn't belong to you!");
+			} else {
+				await fetchMails();
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
+	async function deleteMail(email_id: string) {
+		try {
+			const res = await fetch(PUBLIC_BACKEND_URL + '/email/' + email_id, {
+				method: 'DELETE',
+				credentials: 'include'
+			});
+
+			if (res.status == 401) {
+				$loginStore = LoginState.Not;
+				goto('/');
+			} else if (res.status == 403) {
+				console.error("Trying to delete a mail that doesn't belong to you!");
+			} else {
+				await fetchMails();
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
+	onMount(async () => await fetchMails());
+
+	let emails: any = [];
 
 	let page = {
 		offset: 0,
@@ -43,6 +94,7 @@
 		page.offset * page.limit,
 		page.offset * page.limit + page.limit
 	);
+
 	let active_item = -1;
 
 	function calculateLastActivePage(amount_event: any) {
@@ -50,19 +102,47 @@
 			page.offset = 0;
 		} else {
 			page.offset = Math.floor(active_item / amount_event.detail);
-			console.log(page);
 		}
+	}
+
+	const modal: ModalSettings = {
+		type: 'confirm',
+
+		title: 'Please confirm the deletion.',
+		body: 'Are you sure you want to delete the e-mail? It will be deleted forever.',
+		response: (r: boolean) => console.log('response:', r)
+	};
+
+	function triggerModal(mail_id: string) {
+		new Promise<string>((resolve) => {
+			const modal: ModalSettings = {
+				type: 'confirm',
+				title: 'Please Confirm',
+				body: 'Are you sure you wish to proceed?',
+				response: (r: boolean) => {
+					if (r) {
+						resolve(mail_id);
+					}
+				}
+			};
+			modalStore.trigger(modal);
+		}).then((mail_id: string) => {
+			deleteMail(mail_id);
+		});
 	}
 </script>
 
 <div class="card p-4 w-[100%] min-w-[600px]">
-	{#if emails.length > 0}<Paginator
-			class="m-3"
-			bind:settings={page}
-			on:amount={calculateLastActivePage}
-			showNumerals
-			maxNumerals={1}
-		/>
+	{#if emails.length > 0}
+		{#key page.size}
+			<Paginator
+				class="m-3"
+				bind:settings={page}
+				on:amount={calculateLastActivePage}
+				showNumerals
+				maxNumerals={1}
+			/>
+		{/key}
 		<Accordion>
 			{#each paginatedEmails as email}
 				<AccordionItem
@@ -72,20 +152,36 @@
 				>
 					<svelte:fragment slot="lead">&#9993;&#65039;</svelte:fragment>
 					<svelte:fragment slot="summary">
-						<div class="variant-ghost-surface p-1 grid rounded-2xl grid-cols-12 gap-4 items-center">
-							<div class="pl-10 col-span-8"><strong>{email.subject}</strong></div>
+						<div class="variant-ghost-surface p-1 grid rounded-2xl grid-cols-8 gap-4 items-center">
+							<div class="pl-10 col-span-6"><strong>{email.subject}</strong></div>
 							<div class="justify-self-center text-center">Send Date {email.send_date}</div>
 							<div class="justify-self-center text-center">{email.is_html ? 'HTML' : 'TEXT'}</div>
-							{#if active_item == email.display_id}
-								<div class="justify-self-center pr-3 col-span-2 flex flex-wrap justify-center">
-									<button class="btn variant-filled-primary p-1 m-1">Edit</button>
-									<button class="btn variant-filled-primary p-1 m-1">Send</button>
-									<button class="btn variant-filled-primary p-1 m-1">Hide</button>
-								</div>
-							{/if}
 						</div>
 					</svelte:fragment>
-					<svelte:fragment slot="content">
+					<svelte:fragment slot="content"
+						><div class="justify-self-center flex flex-wrap justify-center">
+							<button class="btn variant-filled-primary p-1 m-1">
+								<EditSVG class="w-5 h-5 mx-5" />
+							</button>
+							<button
+								class="btn variant-filled-primary p-1 m-1"
+								on:click={async () => await duplicateMail(email.id)}
+							>
+								<DuplicateSVG class="w-5 h-5 mx-5" />
+							</button>
+							<button
+								class="btn variant-filled-primary p-1 m-1"
+								on:click={() => triggerModal(email.id)}
+							>
+								<DeleteSVG class="w-5 h-5 mx-5" />
+							</button>
+							<button class="btn variant-filled-primary p-1 m-1">
+								<HideSVG class="w-5 h-5 mx-5" />
+							</button>
+							<button class="btn variant-filled-primary p-1 m-1">
+								<EmailSendSVG class="w-7 h-7 mx-5" />
+							</button>
+						</div>
 						<div
 							style="border-radius:0.3rem; background-color:#c2a6f5; 100%; height: 350px; overflow: hidden;"
 						>

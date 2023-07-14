@@ -11,6 +11,7 @@
 	import { page } from '$app/stores';
 	import { PUBLIC_BACKEND_URL } from '$env/static/public';
 	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
+	import { Modal } from '@skeletonlabs/skeleton';
 
 	import { storePopup } from '@skeletonlabs/skeleton';
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
@@ -57,6 +58,9 @@
 		}
 	});
 </script>
+
+<!-- Modal is supposed to be defined once-->
+<Modal buttonPositive="variant-filled-error" />
 
 <!-- App Shell -->
 <AppShell>
