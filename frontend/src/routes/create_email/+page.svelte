@@ -6,6 +6,7 @@
 	import { PUBLIC_BACKEND_URL } from '$env/static/public';
 	import { LoginState, loginStore } from '$lib/stores/loginState';
 	import TextEditor from '$lib/components/TextEditor/TextEditor.svelte';
+	import BeforeUnload from '$lib/components/beforeUnload.svelte';
 
 	let date_step_lock = false;
 
@@ -77,6 +78,8 @@
 		}
 	}
 </script>
+
+<BeforeUnload />
 
 <div class="card p-4 w-[100%] min-w-[300px]">
 	<Stepper on:complete={create_email}>
