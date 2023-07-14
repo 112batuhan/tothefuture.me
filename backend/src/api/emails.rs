@@ -77,7 +77,7 @@ pub async fn update_email(
     Extension(email): Extension<emails::Model>,
     State(state): State<Arc<SharedState>>,
     Json(request_body): Json<RequestEmailBody>,
-) -> Result<StatusCode, ApiError> {
+) -> Result<(), ApiError> {
     let send_date = check_and_set_date(request_body.date)?;
     state
         .database
@@ -90,7 +90,7 @@ pub async fn update_email(
         )
         .await?;
 
-    Ok(StatusCode::CREATED)
+    Ok(())
 }
 
 pub async fn duplicate_email(

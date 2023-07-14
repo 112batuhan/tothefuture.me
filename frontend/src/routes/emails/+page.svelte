@@ -12,6 +12,7 @@
 	import EmailSendSVG from './emailIcons/emailSend.svg?component';
 	import HideSVG from './emailIcons/hide.svg?component';
 	import DuplicateSVG from './emailIcons/duplicate.svg?component';
+	import { editorData, type EmailData } from '$lib/stores/editor';
 
 	async function fetchMails() {
 		try {
@@ -94,7 +95,6 @@
 		page.offset * page.limit,
 		page.offset * page.limit + page.limit
 	);
-
 	let active_item = -1;
 
 	function calculateLastActivePage(amount_event: any) {
@@ -105,7 +105,7 @@
 		}
 	}
 
-	function triggerModal(mail_id: string) {
+	function triggerModal(mailId: string) {
 		new Promise<string>((resolve) => {
 			const modal: ModalSettings = {
 				type: 'confirm',
@@ -114,14 +114,19 @@
 				body: 'Are you sure you want to delete the e-mail? It will be deleted forever.',
 				response: (r: boolean) => {
 					if (r) {
-						resolve(mail_id);
+						resolve(mailId);
 					}
 				}
 			};
 			modalStore.trigger(modal);
-		}).then((mail_id: string) => {
-			deleteMail(mail_id);
+		}).then((mailId: string) => {
+			deleteMail(mailId);
 		});
+	}
+
+	function exportToEditor(mailData: EmailData) {
+		$editorData = mailData;
+		goto('/editor');
 	}
 </script>
 
@@ -153,9 +158,6 @@
 					</svelte:fragment>
 					<svelte:fragment slot="content"
 						><div class="justify-self-center flex flex-wrap justify-center">
-							<button class="btn variant-filled-primary p-1 m-1">
-								<EditSVG class="w-5 h-5 mx-5" />
-							</button>
 							<button
 								class="btn variant-filled-primary p-1 m-1"
 								on:click={async () => await duplicateMail(email.id)}
@@ -168,12 +170,23 @@
 							>
 								<DeleteSVG class="w-5 h-5 mx-5" />
 							</button>
-							<button class="btn variant-filled-primary p-1 m-1">
-								<HideSVG class="w-5 h-5 mx-5" />
-							</button>
-							<button class="btn variant-filled-primary p-1 m-1">
-								<EmailSendSVG class="w-7 h-7 mx-5" />
-							</button>
+							{#if !email.is_sent}
+								<button
+									class="btn variant-filled-primary p-1 m-1"
+									on:click={() => {
+										delete email.display_id;
+										exportToEditor(email);
+									}}
+								>
+									<EditSVG class="w-5 h-5 mx-5" />
+								</button>
+								<button class="btn variant-filled-primary p-1 m-1">
+									<HideSVG class="w-5 h-5 mx-5" />
+								</button>
+								<button class="btn variant-filled-primary p-1 m-1">
+									<EmailSendSVG class="w-7 h-7 mx-5" />
+								</button>
+							{/if}
 						</div>
 						<div
 							style="border-radius:0.3rem; background-color:#c2a6f5; 100%; height: 350px; overflow: hidden;"
