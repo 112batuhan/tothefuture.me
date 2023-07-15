@@ -78,6 +78,8 @@ pub enum ApiError {
     EmailSend(#[from] resend::ResendError),
     #[error("User tried to send a mail that doesn't belong to them.")]
     UnauthorizedEmail,
+    #[error("Session token processing error")]
+    TokenProcessing,
 }
 
 impl IntoResponse for ApiError {
@@ -108,6 +110,7 @@ impl ApiError {
             ApiError::EmailSend(_) => StatusCode::INTERNAL_SERVER_ERROR,
             ApiError::UnauthorizedEmail => StatusCode::FORBIDDEN,
             ApiError::BadPassword => StatusCode::BAD_REQUEST,
+            ApiError::TokenProcessing => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 
@@ -131,6 +134,7 @@ impl ApiError {
             ApiError::EmailSend(_) => "email_send_error".to_string(),
             ApiError::UnauthorizedEmail => "unauthorized_email_send".to_string(),
             ApiError::BadPassword => "bad_password".to_string(),
+            ApiError::TokenProcessing => "session_token_processing".to_string(),
         };
 
         let message = self.to_string();

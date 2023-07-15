@@ -48,6 +48,11 @@ pub async fn create_email(
     Ok(StatusCode::CREATED)
 }
 
+fn filter_hidden_emails(emails: Vec<emails::Model>) -> Vec<emails::Model> {
+    emails.into_iter();
+    todo!()
+}
+
 pub async fn get_emails(
     Extension(session): Extension<CurrentUser>,
     State(state): State<Arc<SharedState>>,
@@ -106,6 +111,14 @@ pub async fn delete_email(
     State(state): State<Arc<SharedState>>,
 ) -> Result<(), ApiError> {
     state.database.delete_email(email).await?;
+    Ok(())
+}
+
+pub async fn hide_email(
+    Extension(email): Extension<emails::Model>,
+    State(state): State<Arc<SharedState>>,
+) -> Result<(), ApiError> {
+    state.database.hide_email(email).await?;
     Ok(())
 }
 
