@@ -3,6 +3,7 @@ use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter};
 
 use super::{Db, DbError};
 use crate::entities::prelude::*;
+use crate::entities::sea_orm_active_enums::EmailState;
 use crate::entities::*;
 
 impl Db {
@@ -71,6 +72,12 @@ impl Db {
         email.is_html = Set(is_html);
         email.body = Set(body);
         email.send_date = Set(send_date);
+        Ok(email.update(&self.pg_con).await?)
+    }
+
+    pub async fn hide_email(&self, email: emails::Model) -> Result<emails::Model, DbError> {
+        let mut email: emails::ActiveModel = email.into();
+        email.state = Set(EmailState::Hidden);
 
         Ok(email.update(&self.pg_con).await?)
     }

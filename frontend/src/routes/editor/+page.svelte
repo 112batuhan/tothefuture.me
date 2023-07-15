@@ -5,7 +5,6 @@
 	import BeforeUnload from '$lib/components/beforeUnload.svelte';
 	import { editorData } from '$lib/stores/editor';
 	import { inputState, type Input, checkEmpty, setInputStyling } from '$lib/types/inputFields';
-
 	import SaveSVG from './save.svg?component';
 	import { LoginState, loginStore } from '$lib/stores/loginState';
 	import { goto } from '$app/navigation';
@@ -35,7 +34,7 @@
 			return;
 		}
 		try {
-			const res = await fetch(PUBLIC_BACKEND_URL + '/email/' + $editorData.id, {
+			const res = await fetch(PUBLIC_BACKEND_URL + '/email/update/' + $editorData.id, {
 				method: 'PATCH',
 				credentials: 'include',
 				body: JSON.stringify({

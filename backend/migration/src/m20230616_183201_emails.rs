@@ -1,4 +1,6 @@
 use sea_orm_migration::prelude::*;
+use sea_orm_migration::sea_orm::{EnumIter, Iterable};
+use sea_orm_migration::sea_query::extension::postgres::Type;
 
 #[derive(DeriveMigrationName)]
 pub struct Migration;
@@ -7,6 +9,15 @@ pub struct Migration;
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         // Replace the sample below with your own migration scripts
+
+        manager
+            .create_type(
+                Type::create()
+                    .as_enum(EmailState::Table)
+                    .values(EmailState::iter().skip(1))
+                    .to_owned(),
+            )
+            .await?;
 
         manager
             .create_table(
@@ -26,16 +37,10 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Emails::Body).string().not_null())
                     .col(ColumnDef::new(Emails::SendDate).date().not_null())
                     .col(
-                        ColumnDef::new(Emails::IsSent)
-                            .boolean()
+                        ColumnDef::new(Emails::State)
+                            .enumeration(EmailState::Table, EmailState::iter().skip(1))
                             .not_null()
-                            .default(false),
-                    )
-                    .col(
-                        ColumnDef::new(Emails::IsHidden)
-                            .boolean()
-                            .not_null()
-                            .default(false),
+                            .default("default"),
                     )
                     .to_owned(),
             )
@@ -48,6 +53,14 @@ impl MigrationTrait for Migration {
         manager
             .drop_table(Table::drop().table(Emails::Table).to_owned())
             .await
+            .unwrap();
+
+        manager
+            .drop_type(Type::drop().if_exists().name(EmailState::Table).to_owned())
+            .await
+            .unwrap();
+
+        Ok(())
     }
 }
 
@@ -59,8 +72,19 @@ enum Emails {
     Owner,
     Subject,
     IsHtml,
+    State,
     Body,
     SendDate,
-    IsSent,
-    IsHidden,
+}
+
+#[derive(Iden, EnumIter, Default)]
+enum EmailState {
+    Table,
+    #[iden = "default"]
+    #[default]
+    Default,
+    #[iden = "hidden"]
+    Hidden,
+    #[iden = "sent"]
+    Sent,
 }

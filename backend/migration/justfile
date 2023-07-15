@@ -1,0 +1,7 @@
+# The goal of this file is to load the .env file that is here locally with the db url.
+# This is triggered from root folder just file. Can also be used standalone.
+
+set dotenv-load := true
+
+generate-entities-main-command:
+    sea-orm-cli generate entity -u $DATABASE_URL -o ../src/entities --with-serde serialize --serde-skip-hidden-column 
