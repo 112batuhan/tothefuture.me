@@ -9,6 +9,7 @@ use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 
 use super::{ApiError, CurrentUser, SharedState};
+use crate::entities::sea_orm_active_enums::EmailState;
 use crate::entities::*;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -155,8 +156,20 @@ pub async fn check_hidden_status<T>(
     request: Request<T>,
     next: axum::middleware::Next<T>,
 ) -> Result<Response, ApiError> {
-    if email.is_hidden && !email.is_sent {
+    if email.state == EmailState::Hidden {
         return Err(ApiError::HiddenEmail);
+    }
+    Ok(next.run(request).await)
+}
+
+// add it to the route after route rework
+pub async fn check_sent_status<T>(
+    Extension(email): Extension<emails::Model>,
+    request: Request<T>,
+    next: axum::middleware::Next<T>,
+) -> Result<Response, ApiError> {
+    if email.state == EmailState::Sent {
+        return Err(ApiError::SentEmail);
     }
     Ok(next.run(request).await)
 }
@@ -165,7 +178,7 @@ fn filter_hidden_emails(emails: Vec<emails::Model>) -> Vec<emails::Model> {
     let emails: Vec<emails::Model> = emails
         .into_iter()
         .map(|mut email| {
-            if email.is_hidden && !email.is_sent {
+            if email.state == EmailState::Hidden {
                 email.body = String::new();
             }
             email
@@ -179,33 +192,22 @@ fn filter_hidden_emails(emails: Vec<emails::Model>) -> Vec<emails::Model> {
 fn test_hidden_email_filter() {
     let base_email = emails::Model {
         body: "I'm an email Body!".to_string(),
-        is_hidden: false,
         id: 1,
         owner: 1,
         subject: " I'm the subject!".to_string(),
         is_html: false,
         send_date: chrono::NaiveDate::from_str("2023-07-15").unwrap(),
-        is_sent: false,
+        state: EmailState::Default,
     };
     let mut hidden_email = base_email.clone();
-    hidden_email.is_hidden = true;
+    hidden_email.state = EmailState::Hidden;
 
-    let mut hidden_and_sent_email = base_email.clone();
-    hidden_and_sent_email.is_hidden = true;
-    hidden_and_sent_email.is_sent = true;
+    let mut sent_email = base_email.clone();
+    sent_email.state = EmailState::Sent;
 
-    let mut sent_but_not_hidden_email = base_email.clone();
-    sent_but_not_hidden_email.is_sent = true;
-
-    let emails = vec![
-        base_email,
-        hidden_email,
-        hidden_and_sent_email,
-        sent_but_not_hidden_email,
-    ];
+    let emails = vec![base_email, hidden_email, sent_email];
     let new_emails = filter_hidden_emails(emails);
     assert_eq!(new_emails[0].body, "I'm an email Body!".to_string());
     assert_eq!(new_emails[1].body, "".to_string());
     assert_eq!(new_emails[2].body, "I'm an email Body!".to_string());
-    assert_eq!(new_emails[3].body, "I'm an email Body!".to_string());
 }

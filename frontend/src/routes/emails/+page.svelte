@@ -43,7 +43,7 @@
 
 	async function duplicateMail(email_id: string) {
 		try {
-			const res = await fetch(PUBLIC_BACKEND_URL + '/email/' + email_id + '/duplicate', {
+			const res = await fetch(PUBLIC_BACKEND_URL + '/email/duplicate/' + email_id, {
 				method: 'get',
 				credentials: 'include'
 			});
@@ -63,7 +63,7 @@
 
 	async function deleteMail(email_id: string) {
 		try {
-			const res = await fetch(PUBLIC_BACKEND_URL + '/email/' + email_id, {
+			const res = await fetch(PUBLIC_BACKEND_URL + '/email/delete/' + email_id, {
 				method: 'DELETE',
 				credentials: 'include'
 			});
@@ -83,8 +83,8 @@
 
 	async function hideMail(email_id: string) {
 		try {
-			const res = await fetch(PUBLIC_BACKEND_URL + '/email/' + email_id + '/hide', {
-				method: 'PATCH',
+			const res = await fetch(PUBLIC_BACKEND_URL + '/email/hide/' + email_id, {
+				method: 'PUT',
 				credentials: 'include'
 			});
 
@@ -199,7 +199,7 @@
 					</svelte:fragment>
 					<svelte:fragment slot="content"
 						><div class="justify-self-center flex flex-wrap justify-center">
-							{#if !email.is_hidden || email.is_sent}
+							{#if !(email.state == 'Hidden')}
 								<button
 									class="btn variant-filled-primary p-1 m-1"
 									on:click={async () => await duplicateMail(email.id)}
@@ -214,7 +214,7 @@
 							>
 								<DeleteSVG class="w-5 h-5 mx-5" />
 							</button>
-							{#if !email.is_hidden && !email.is_sent}
+							{#if email.state == 'Default'}
 								<button
 									class="btn variant-filled-primary p-1 m-1"
 									on:click={() => {
@@ -225,7 +225,8 @@
 									<EditSVG class="w-5 h-5 mx-5" />
 								</button>
 							{/if}
-							{#if !email.is_hidden && !email.is_sent}
+
+							{#if email.state == 'Default'}
 								<button
 									class="btn variant-filled-primary p-1 m-1"
 									on:click={() => triggerHideModal(email.id)}
@@ -233,16 +234,18 @@
 									<HideSVG class="w-5 h-5 mx-5" />
 								</button>
 							{/if}
-							{#if !email.is_hidden && !email.is_sent}
+
+							{#if email.state == 'Default'}
 								<button class="btn variant-filled-primary p-1 m-1">
 									<EmailSendSVG class="w-7 h-7 mx-5" />
 								</button>
 							{/if}
 						</div>
-						{#if !email.is_hidden || email.is_sent}
-							{#if email.is_sent}
-								<div class="text-center">This e-mail has already been sent.</div>
-							{/if}
+						{#if email.state == 'Sent'}
+							<div class="text-center">This e-mail has already been sent.</div>
+						{:else if email.state == 'Hidden'}
+							<div class="text-center">This e-mail has been hidden.</div>
+						{:else if email.state == 'Default'}
 							<div
 								style="border-radius:0.3rem; background-color:#c2a6f5; 100%; height: 350px; overflow: hidden;"
 							>
@@ -258,8 +261,6 @@
 										srcdoc={email.body}
 									/>{/if}
 							</div>
-						{:else}
-							<div class="text-center">This e-mail has been hidden.</div>
 						{/if}
 					</svelte:fragment>
 				</AccordionItem>

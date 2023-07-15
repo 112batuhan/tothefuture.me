@@ -34,7 +34,7 @@
 			return;
 		}
 		try {
-			const res = await fetch(PUBLIC_BACKEND_URL + '/email/' + $editorData.id, {
+			const res = await fetch(PUBLIC_BACKEND_URL + '/email/update/' + $editorData.id, {
 				method: 'PATCH',
 				credentials: 'include',
 				body: JSON.stringify({

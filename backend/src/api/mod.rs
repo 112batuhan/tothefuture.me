@@ -82,6 +82,8 @@ pub enum ApiError {
     TokenProcessing,
     #[error("Trying to manipulate a hidden e-mail")]
     HiddenEmail,
+    #[error("Trying to manipulate a sent e-mail")]
+    SentEmail,
 }
 
 impl IntoResponse for ApiError {
@@ -114,6 +116,7 @@ impl ApiError {
             ApiError::BadPassword => StatusCode::BAD_REQUEST,
             ApiError::TokenProcessing => StatusCode::INTERNAL_SERVER_ERROR,
             ApiError::HiddenEmail => StatusCode::FORBIDDEN,
+            ApiError::SentEmail => StatusCode::FORBIDDEN,
         }
     }
 
@@ -139,6 +142,7 @@ impl ApiError {
             ApiError::BadPassword => "bad_password".to_string(),
             ApiError::TokenProcessing => "session_token_processing".to_string(),
             ApiError::HiddenEmail => "hidden_email_manipulation".to_string(),
+            ApiError::SentEmail => "sent_email_manipulation".to_string(),
         };
 
         let message = self.to_string();
