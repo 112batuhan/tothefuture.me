@@ -6,7 +6,6 @@ use axum::http::{HeaderMap, Request};
 use axum::response::{IntoResponse, Response};
 use axum::{Extension, Json};
 use email_address::*;
-use itertools::Itertools;
 use lazy_static::lazy_static;
 use pbkdf2::password_hash::rand_core::OsRng;
 use pbkdf2::password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString};
@@ -14,7 +13,6 @@ use pbkdf2::Pbkdf2;
 use rand_chacha::ChaCha8Rng;
 use rand_core::RngCore;
 use reqwest::StatusCode;
-use sea_orm::Related;
 use serde::{Deserialize, Serialize};
 use tokio::sync::Mutex;
 
