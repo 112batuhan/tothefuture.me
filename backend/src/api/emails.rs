@@ -93,15 +93,18 @@ pub async fn send_demo_email(
     }
 
     let user = state.database.get_user_by_id(session.get_user_id()).await?;
+    
+    // Setting cooldown before actual sending so that there is no spam if it fails
+    state
+        .database
+        .set_email_preview_cooldown(session.get_user_id())
+        .await?;
+
     state
         .external_request
         .send_email(user.email, email.subject, email.body)
         .await?;
 
-    state
-        .database
-        .set_email_preview_cooldown(session.get_user_id())
-        .await?;
     Ok(())
 }
 
