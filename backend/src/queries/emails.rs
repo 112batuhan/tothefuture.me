@@ -1,7 +1,7 @@
 use sea_orm::ActiveValue::{self, Set};
 use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter};
 
-use super::{Db, DbError};
+use super::{Db, DbError, RedisType};
 use crate::entities::prelude::*;
 use crate::entities::sea_orm_active_enums::EmailState;
 use crate::entities::*;
@@ -29,7 +29,7 @@ impl Db {
         Ok(())
     }
 
-    pub async fn get_emails_by_user(&self, user_id: i64) -> Result<Vec<emails::Model>, DbError> {
+    pub async fn get_emails_by_user_id(&self, user_id: i64) -> Result<Vec<emails::Model>, DbError> {
         let email_vec = emails::Entity::find()
             .filter(emails::Column::Owner.eq(user_id))
             .all(&self.pg_con)
@@ -88,5 +88,27 @@ impl Db {
         email.id = ActiveValue::default();
         email.subject = Set(new_subject);
         Ok(email.insert(&self.pg_con).await?)
+    }
+
+    pub async fn set_email_preview_cooldown(&self, user_id: i64) -> Result<(), DbError> {
+        redis::cmd("SET")
+            .arg(RedisType::EmailCooldown(user_id).to_string())
+            // It really doesn't matter what you set as value
+            // We only need to check if the key is present
+            .arg(0)
+            .arg("EX")
+            .arg(55) // 1 minute (accounting for frontend desync)
+            .query_async(&mut self.redis_con.clone())
+            .await?;
+        Ok(())
+    }
+
+    pub async fn check_email_preview_cooldown(&self, user_id: i64) -> Result<bool, DbError> {
+        let result: Option<()> = redis::cmd("GET")
+            .arg(RedisType::EmailCooldown(user_id).to_string())
+            .query_async(&mut self.redis_con.clone())
+            .await?;
+
+        Ok(result.is_some())
     }
 }

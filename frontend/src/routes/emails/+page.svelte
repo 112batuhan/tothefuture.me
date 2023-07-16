@@ -100,6 +100,27 @@
 			console.error(error);
 		}
 	}
+	async function sendPreview(email_id: string) {
+		try {
+			const res = await fetch(PUBLIC_BACKEND_URL + '/email/preview/' + email_id, {
+				method: 'GET',
+				credentials: 'include'
+			});
+
+			if (res.status == 429) {
+				console.log('Cooldown!');
+			}
+
+			if (res.status == 401) {
+				$loginStore = LoginState.Not;
+				goto('/');
+			} else if (res.status == 403) {
+				console.error("Trying to hide a mail that doesn't belong to you!");
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	}
 
 	onMount(async () => await fetchMails());
 
@@ -162,6 +183,25 @@
 			modalStore.trigger(modal);
 		}).then((mailId: string) => {
 			hideMail(mailId);
+		});
+	}
+
+	function triggerPreviewModal(mailId: string) {
+		new Promise<string>((resolve) => {
+			const modal: ModalSettings = {
+				type: 'confirm',
+
+				title: 'Please confirm the preview.',
+				body: `Preview has one minute cooldown. So please be sure that you won't need it in another minute.`,
+				response: (r: boolean) => {
+					if (r) {
+						resolve(mailId);
+					}
+				}
+			};
+			modalStore.trigger(modal);
+		}).then((mailId: string) => {
+			sendPreview(mailId);
 		});
 	}
 
@@ -236,7 +276,10 @@
 							{/if}
 
 							{#if email.state == 'Default'}
-								<button class="btn variant-filled-primary p-1 m-1">
+								<button
+									class="btn variant-filled-primary p-1 m-1"
+									on:click={() => triggerPreviewModal(email.id)}
+								>
 									<EmailSendSVG class="w-7 h-7 mx-5" />
 								</button>
 							{/if}

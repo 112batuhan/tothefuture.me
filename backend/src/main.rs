@@ -64,7 +64,7 @@ async fn main() {
 
     let app = Router::new()
         .route("/email/hide/:email_id", put(hide_email))
-        .route("/email/send/:email_id", get(send_demo_email))
+        .route("/email/preview/:email_id", get(send_demo_email))
         .route("/email/update/:email_id", patch(update_email))
         .route_layer(middleware::from_fn(check_sent_status))
         .route("/email/duplicate/:email_id", get(duplicate_email))
