@@ -36,7 +36,10 @@ async fn main() {
         .await
         .expect("Failed to initiate Shared State");
 
-    let origins = [std::env::var("FRONTEND_URL").unwrap().parse().unwrap()];
+    let origins = [
+        std::env::var("FRONTEND_URL").unwrap().parse().unwrap(),
+        "https://api.resend.com/".parse().unwrap(),
+    ];
 
     let cors = CorsLayer::new()
         .allow_methods([
