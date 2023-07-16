@@ -78,12 +78,14 @@ pub enum ApiError {
     EmailSend(#[from] resend::ResendError),
     #[error("User tried to send a mail that doesn't belong to them.")]
     UnauthorizedEmail,
-    #[error("Session token processing error")]
+    #[error("Session token processing error.")]
     TokenProcessing,
-    #[error("Trying to manipulate a hidden e-mail")]
+    #[error("Trying to manipulate a hidden e-mail.")]
     HiddenEmail,
-    #[error("Trying to manipulate a sent e-mail")]
+    #[error("Trying to manipulate a sent e-mail.")]
     SentEmail,
+    #[error("Cooldown for e-mail preview is not finished yet.")]
+    EmailPreviewCooldown,
 }
 
 impl IntoResponse for ApiError {
@@ -117,6 +119,7 @@ impl ApiError {
             ApiError::TokenProcessing => StatusCode::INTERNAL_SERVER_ERROR,
             ApiError::HiddenEmail => StatusCode::FORBIDDEN,
             ApiError::SentEmail => StatusCode::FORBIDDEN,
+            ApiError::EmailPreviewCooldown => StatusCode::TOO_MANY_REQUESTS,
         }
     }
 
@@ -143,6 +146,7 @@ impl ApiError {
             ApiError::TokenProcessing => "session_token_processing".to_string(),
             ApiError::HiddenEmail => "hidden_email_manipulation".to_string(),
             ApiError::SentEmail => "sent_email_manipulation".to_string(),
+            ApiError::EmailPreviewCooldown => "email_preview_cooldown".to_string(),
         };
 
         let message = self.to_string();

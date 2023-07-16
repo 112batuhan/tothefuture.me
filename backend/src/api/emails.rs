@@ -70,7 +70,7 @@ pub async fn get_emails(
 ) -> Result<Json<Vec<emails::Model>>, ApiError> {
     let email_list = state
         .database
-        .get_emails_by_user(session.get_user_id())
+        .get_emails_by_user_id(session.get_user_id())
         .await?;
 
     let email_list = filter_hidden_emails(email_list);
@@ -83,10 +83,24 @@ pub async fn send_demo_email(
     Extension(session): Extension<CurrentUser>,
     State(state): State<Arc<SharedState>>,
 ) -> Result<(), ApiError> {
+    let preview_cooldown = state
+        .database
+        .check_email_preview_cooldown(session.get_user_id())
+        .await?;
+
+    if preview_cooldown {
+        return Err(ApiError::EmailPreviewCooldown);
+    }
+
     let user = state.database.get_user_by_id(session.get_user_id()).await?;
     state
         .external_request
         .send_email(user.email, email.subject, email.body)
+        .await?;
+
+    state
+        .database
+        .set_email_preview_cooldown(session.get_user_id())
         .await?;
     Ok(())
 }

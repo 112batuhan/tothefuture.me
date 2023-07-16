@@ -14,7 +14,7 @@ const UNIQUE_KEY_VIOLATION_CODE: &str = "23505";
 // but no need to complicate and overdo things
 pub enum RedisType<'a> {
     SessionToken(&'a str),
-    EmailCooldown(&'a str),
+    EmailCooldown(i64),
     SessionID(i64),
 }
 
