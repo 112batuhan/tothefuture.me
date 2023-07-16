@@ -69,7 +69,7 @@
 		<AppBar gridColumns="grid-cols-3" slotDefault="place-self-center" slotTrail="place-content-end">
 			<svelte:fragment slot="lead">
 				<button on:click={() => goto('/')}>
-					<strong class="text-xl uppercase flex-none mr-10">timecapsule-rs</strong>
+					<strong class="text-xl flex-none mr-10">ToTheFuture.Me</strong>
 				</button>
 			</svelte:fragment>
 

@@ -106,7 +106,10 @@ impl ApiError {
                 DbError::UniqueConstraintViolation => StatusCode::CONFLICT,
                 DbError::PGDatabase(_) => StatusCode::INTERNAL_SERVER_ERROR,
                 // The reason to use OK instead of No Content is that proxies
-                // don't like when there is a body with 204.
+                // don't like when there is a body with 204. And we are
+                // returning an error explanation here.
+                // We might need to have explicitly handle these in code and return empty body.
+                // or maybe do it here with a condition.
                 DbError::EmptyQuery => StatusCode::OK,
                 DbError::MissingSessionTokenInDatabase => StatusCode::UNAUTHORIZED,
                 DbError::RedisDatabase(_) => StatusCode::INTERNAL_SERVER_ERROR,
