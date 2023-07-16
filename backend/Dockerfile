@@ -10,7 +10,8 @@ COPY . .
 RUN rm -rf ./migration
 RUN cargo build --release
 
-FROM debian:bookworm-slim
+FROM debian:buster-slim
+RUN apt-get update & apt-get install -y extra-runtime-dependencies & rm -rf /var/lib/apt/lists/*
 COPY --from=builder ./target/release/backend ./target/release/backend
 ENV PORT=$PORT
 ARG DATABASE_URL=$DATABASE_URL
