@@ -23,6 +23,12 @@
 
 			if (res.status == 200) {
 				emails = await res.json();
+
+				if (emails.hasOwnProperty('error_type')) {
+					emails = [];
+					return;
+				}
+
 				emails = emails.reverse();
 				// Paginator email length update
 				emails.forEach((item: any, i: number) => {
@@ -30,7 +36,7 @@
 				});
 				page.size = emails.length;
 				active_item = 0;
-			} else if (res.status == 204) {
+			} else if (res.status == 202) {
 				emails = [];
 			} else if (res.status == 401) {
 				$loginStore = LoginState.Not;
