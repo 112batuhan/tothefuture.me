@@ -60,6 +60,7 @@ impl ExternalRequest {
             .json(&request_body)
             .send()
             .await?;
+        dbg!(&res);
         res.error_for_status_ref()
             .map_err(|error| ResendError::Response(error.status().unwrap()))?;
         Ok(())
