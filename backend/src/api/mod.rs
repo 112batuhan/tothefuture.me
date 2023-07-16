@@ -105,7 +105,9 @@ impl ApiError {
             ApiError::Database(database_error) => match database_error {
                 DbError::UniqueConstraintViolation => StatusCode::CONFLICT,
                 DbError::PGDatabase(_) => StatusCode::INTERNAL_SERVER_ERROR,
-                DbError::EmptyQuery => StatusCode::NO_CONTENT,
+                // The reason to use OK instead of No Content is that proxies
+                // don't like when there is a body with 204.
+                DbError::EmptyQuery => StatusCode::OK,
                 DbError::MissingSessionTokenInDatabase => StatusCode::UNAUTHORIZED,
                 DbError::RedisDatabase(_) => StatusCode::INTERNAL_SERVER_ERROR,
             },
