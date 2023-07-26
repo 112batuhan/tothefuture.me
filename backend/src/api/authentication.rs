@@ -52,7 +52,7 @@ fn generate_session_token(random: Arc<Mutex<ChaCha8Rng>>) -> String {
         let mut random = random.lock().unwrap();
         random.fill_bytes(&mut u128_pool);
     }
-    dbg!(u128::from_le_bytes(u128_pool).to_string())
+    u128::from_le_bytes(u128_pool).to_string()
 }
 
 fn extract_token(headers: &HeaderMap) -> Result<String, ApiError> {
