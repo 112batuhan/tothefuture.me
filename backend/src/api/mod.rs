@@ -1,7 +1,7 @@
 pub mod authentication;
 pub mod emails;
 
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
@@ -10,7 +10,6 @@ use rand_chacha::ChaCha8Rng;
 use rand_core::{OsRng, RngCore, SeedableRng};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
-use tokio::sync::Mutex;
 
 use crate::queries::{Db, DbError};
 use crate::resend::{self, ExternalRequest};

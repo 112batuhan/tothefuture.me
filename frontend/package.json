@@ -53,6 +53,7 @@
 		"@tiptap/extension-underline": "^2.0.3",
 		"@tiptap/pm": "^2.0.3",
 		"@tiptap/starter-kit": "^2.0.3",
+		"axios": "^1.4.0",
 		"brace": "^0.11.1",
 		"cl-editor": "^2.3.0",
 		"dotenv": "^16.3.1",

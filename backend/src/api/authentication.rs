@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 
 use axum::extract::State;
 use axum::http::header::{self, COOKIE};
@@ -14,7 +14,6 @@ use rand_chacha::ChaCha8Rng;
 use rand_core::RngCore;
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
-use tokio::sync::Mutex;
 
 use super::{ApiError, CurrentUser, SharedState};
 use crate::entities::users;
@@ -46,14 +45,14 @@ fn hash_password(password: &str) -> Result<String, ApiError> {
     }
 }
 
-async fn generate_session_token(random: Arc<Mutex<ChaCha8Rng>>) -> String {
+fn generate_session_token(random: Arc<Mutex<ChaCha8Rng>>) -> String {
     let mut u128_pool = [0u8; 16];
     {
         // to drop the lock early
-        let mut random = random.lock().await;
+        let mut random = random.lock().unwrap();
         random.fill_bytes(&mut u128_pool);
     }
-    u128::from_le_bytes(u128_pool).to_string()
+    dbg!(u128::from_le_bytes(u128_pool).to_string())
 }
 
 fn extract_token(headers: &HeaderMap) -> Result<String, ApiError> {
@@ -110,7 +109,7 @@ pub async fn login(
         }
     }
 
-    let session_token = generate_session_token(state.random.clone()).await;
+    let session_token = generate_session_token(state.random.clone());
     state
         .database
         .insert_session(user.id, &session_token)
